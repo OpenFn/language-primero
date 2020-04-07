@@ -1,7 +1,7 @@
 {
-  "name": "language-http",
-  "version": "2.4.1",
-  "description": "An HTTP request language package for use with Open Function",
+  "name": "language-primero",
+  "version": "0.1.0",
+  "description": "A UNICEF Primero language package for use with Open Function",
   "main": "lib/index.js",
   "scripts": {
     "build": "make",
