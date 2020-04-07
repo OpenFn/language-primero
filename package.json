@@ -1,0 +1,37 @@
+{
+  "name": "language-http",
+  "version": "2.4.1",
+  "description": "An HTTP request language package for use with Open Function",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "make",
+    "test": "mocha --require @babel/register",
+    "test:watch": "mocha -w --require @babel/register"
+  },
+  "author": "Open Function Group",
+  "license": "LGPLv3",
+  "files": [
+    "lib/"
+  ],
+  "dependencies": {
+    "cheerio": "1.0.0-rc.2",
+    "cheerio-tableparser": "1.0.1",
+    "csv-parse": "^4.8.3",
+    "language-common": "github:openfn/language-common#v0.3.0",
+    "request": "^2.72.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-function-bind": "^7.8.3",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-stage-0": "^7.8.3",
+    "@babel/register": "^7.9.0",
+    "assertion-error": "^1.0.1",
+    "chai": "^3.4.0",
+    "deep-eql": "^0.1.3",
+    "mocha": "^7.1.1",
+    "nock": "^12.0.3",
+    "sinon": "^1.17.2"
+  }
+}
