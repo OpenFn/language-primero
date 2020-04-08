@@ -1,6 +1,7 @@
 export function setUrl(configuration, path) {
-  if (configuration && configuration.baseUrl)
-    return configuration.baseUrl + path;
+  console.log(configuration);
+
+  if (configuration && configuration.url) return configuration.url + path;
   else return path;
 }
 

@@ -2,11 +2,11 @@ import Adaptor from '../src';
 import { expect } from 'chai';
 import nock from 'nock';
 
-const { execute, get, post, put, patch, del, alterState } = Adaptor;
+const { execute, getCases, alterState } = Adaptor;
 
 function stdGet(state) {
   return execute(get('https://www.example.com/api/fake', {}))(state).then(
-    nextState => {
+    (nextState) => {
       const { data, references } = nextState;
       expect(data).to.eql({ httpStatus: 'OK', message: 'the response' });
       expect(references).to.eql([{ triggering: 'event' }]);
@@ -16,7 +16,7 @@ function stdGet(state) {
 
 function clientReq(method, state) {
   return execute(method('https://www.example.com/api/fake', {}))(state).then(
-    nextState => {
+    (nextState) => {
       const { data, references } = nextState;
       expect(data).to.eql({ httpStatus: 'OK', message: 'the response' });
       expect(references).to.eql([{ a: 1 }]);
@@ -25,35 +25,35 @@ function clientReq(method, state) {
 }
 
 describe('The execute() function', () => {
-  it('executes each operation in sequence', done => {
+  it('executes each operation in sequence', (done) => {
     let state = {};
     let operations = [
-      state => {
+      (state) => {
         return { counter: 1 };
       },
-      state => {
+      (state) => {
         return { counter: 2 };
       },
-      state => {
+      (state) => {
         return { counter: 3 };
       },
     ];
 
     execute(...operations)(state)
-      .then(finalState => {
+      .then((finalState) => {
         expect(finalState).to.eql({ counter: 3 });
       })
       .then(done)
       .catch(done);
   });
 
-  it('assigns references, data to the initialState', done => {
+  it('assigns references, data to the initialState', (done) => {
     let state = {};
 
     let finalState = execute()(state);
 
     execute()(state)
-      .then(finalState => {
+      .then((finalState) => {
         expect(finalState).to.eql({
           references: [],
           data: null,
@@ -64,23 +64,24 @@ describe('The execute() function', () => {
   });
 });
 
-describe('The get() function', () => {
+describe('The getCases() function', () => {
   before(() => {
-    nock('https://www.example.com')
-      .persist()
-      .get('/api/fake')
-      .reply(200, {
-        httpStatus: 'OK',
-        message: 'the response',
-      });
+    nock('https://www.example.com').persist().get('/api/cases').reply(200, {
+      httpStatus: 'OK',
+      message: 'the response',
+    });
+    nock('https://www.example.com').persist().post('/api/login').reply(200, {
+      httpStatus: 'OK',
+      message: 'the response',
+    });
   });
 
   it.only('prepares nextState properly', () => {
     let state = {
       configuration: {
-        username: 'hello',
+        user: 'hello',
         password: 'there',
-        baseUrl: 'https://www.example.com',
+        url: 'https://www.example.com',
       },
       data: {
         triggering: 'event',
@@ -88,21 +89,21 @@ describe('The get() function', () => {
     };
 
     return execute(
-      alterState(state => {
+      alterState((state) => {
         state.counter = 1;
         return state;
       }),
-      get('/api/fake', {}),
-      alterState(state => {
+      getCases({}),
+      alterState((state) => {
         state.counter = 2;
         return state;
       })
-    )(state).then(nextState => {
+    )(state).then((nextState) => {
       const { data, references, counter } = nextState;
       expect(data).to.eql({ httpStatus: 'OK', message: 'the response' });
       expect(references).to.eql([{ triggering: 'event' }]);
       expect(counter).to.eql(2);
-      console.log(nextState)
+      console.log(nextState);
     });
   });
 
@@ -138,40 +139,30 @@ describe('The get() function', () => {
 
 describe('The client', () => {
   before(() => {
-    nock('https://www.example.com')
-      .get('/api/fake')
-      .reply(200, {
-        httpStatus: 'OK',
-        message: 'the response',
-      });
+    nock('https://www.example.com').get('/api/fake').reply(200, {
+      httpStatus: 'OK',
+      message: 'the response',
+    });
 
-    nock('https://www.example.com')
-      .post('/api/fake')
-      .reply(200, {
-        httpStatus: 'OK',
-        message: 'the response',
-      });
+    nock('https://www.example.com').post('/api/fake').reply(200, {
+      httpStatus: 'OK',
+      message: 'the response',
+    });
 
-    nock('https://www.example.com')
-      .put('/api/fake')
-      .reply(200, {
-        httpStatus: 'OK',
-        message: 'the response',
-      });
+    nock('https://www.example.com').put('/api/fake').reply(200, {
+      httpStatus: 'OK',
+      message: 'the response',
+    });
 
-    nock('https://www.example.com')
-      .patch('/api/fake')
-      .reply(200, {
-        httpStatus: 'OK',
-        message: 'the response',
-      });
+    nock('https://www.example.com').patch('/api/fake').reply(200, {
+      httpStatus: 'OK',
+      message: 'the response',
+    });
 
-    nock('https://www.example.com')
-      .delete('/api/fake')
-      .reply(200, {
-        httpStatus: 'OK',
-        message: 'the response',
-      });
+    nock('https://www.example.com').delete('/api/fake').reply(200, {
+      httpStatus: 'OK',
+      message: 'the response',
+    });
   });
 
   const stdState = {
