@@ -4,6 +4,7 @@ import {
   expandReferences,
   composeNextState,
 } from 'language-common';
+import { post as httpPost } from 'language-http';
 import { assembleError, tryJson, setUrl } from './Utils';
 import request from 'request';
 
@@ -135,7 +136,7 @@ export function getCases(query) {
  * Create case in Primero
  * @public
  * @example
- *  createCase(params)
+ *  createCase(params, callback)
  * @function
  * @param {object} params - an object with some case data.
  * @param {function} callback - (Optional) Callback function
@@ -173,13 +174,14 @@ export function createCase(params) {
  * Update case in Primero
  * @public
  * @example
- *  updateCase(id, params)
+ *  updateCase(id, params, callback)
  * @function
+ * @param {string} id - an ID to use for the update.
  * @param {object} params - an object with some case data.
  * @param {function} callback - (Optional) Callback function
  * @returns {Operation}
  */
-export function updateCase(id, params) {
+export function updateCase(id, params, callback) {
   return (state) => {
     const { url, user, password } = state.configuration;
     const { data } = expandReferences(params)(state);
@@ -253,18 +255,24 @@ export function upsertCase(params, callback) {
             console.log(
               `Resp was ${resp}, creating with ${JSON.stringify(data, null, 2)}`
             );
-            resolve(createCase(data)(state));
+            resolve(createCase(data, callback)(state));
           } else if (resp.length == 1) {
             console.log(
               `Resp was ${resp}, updating with ${JSON.stringify(data, null, 2)}`
             );
-            resolve(updateCase(resp[0].id, data));
+            resolve(updateCase(resp[0].id, data, callback));
           } else {
             reject('Multiple cases found.');
           }
         }
       });
     });
+  };
+}
+
+export function post(path, params) {
+  return (state) => {
+    httpPost(path, params)(state);
   };
 }
 
