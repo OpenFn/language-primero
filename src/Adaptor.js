@@ -144,7 +144,7 @@ export function getCases(query) {
  */
 export function createCase(params) {
   return (state) => {
-    const { url, user, password } = state.configuration;
+    const { url } = state.configuration;
     const { data } = expandReferences(params)(state);
 
     const requestParams = {
@@ -183,7 +183,7 @@ export function createCase(params) {
  */
 export function updateCase(id, params, callback) {
   return (state) => {
-    const { url, user, password } = state.configuration;
+    const { url } = state.configuration;
     const { data } = expandReferences(params)(state);
 
     const requestParams = {
@@ -213,7 +213,7 @@ export function updateCase(id, params, callback) {
  * Upsert case to Primero
  * @public
  * @example
- *  upsertCase(params)
+ *  upsertCase({externalId: "123", data: {...}})
  * @function
  * @param {object} params - an object with an externalId and some case data.
  * @param {function} callback - (Optional) Callback function
@@ -221,7 +221,7 @@ export function updateCase(id, params, callback) {
  */
 export function upsertCase(params, callback) {
   return (state) => {
-    const { url, user, password } = state.configuration;
+    const { url } = state.configuration;
     const { data, externalId } = expandReferences(params)(state);
 
     var qs = {
@@ -262,7 +262,9 @@ export function upsertCase(params, callback) {
             );
             resolve(updateCase(resp[0].id, data, callback));
           } else {
-            reject('Multiple cases found.');
+            reject(
+              'Multiple cases found. Try using another externalId and ensure that it is unique.'
+            );
           }
         }
       });
