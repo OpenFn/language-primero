@@ -4,7 +4,8 @@ import {
   expandReferences,
   composeNextState,
 } from 'language-common';
-import { post as httpPost } from 'language-http';
+import Adaptor from 'language-http';
+const httpPost = Adaptor.post;
 import { assembleError, tryJson, setUrl } from './Utils';
 import request from 'request';
 
@@ -142,9 +143,10 @@ export function getCases(query) {
  * @param {function} callback - (Optional) Callback function
  * @returns {Operation}
  */
-export function createCase(params) {
+export function createCase(params, callback) {
   return (state) => {
     const { url } = state.configuration;
+
     const { data } = expandReferences(params)(state);
 
     const requestParams = {
@@ -161,7 +163,14 @@ export function createCase(params) {
           reject(error);
         } else {
           const resp = tryJson(body);
-          const nextState = composeNextState(state, resp);
+          console.log(
+            `Post succeeded. Response body from server: ${JSON.stringify(
+              resp.body,
+              null,
+              2
+            )}`
+          );
+          const nextState = composeNextState(state, resp.body);
           if (callback) resolve(callback(nextState));
           resolve(nextState);
         }
@@ -240,9 +249,7 @@ export function upsertCase(params, callback) {
       qs,
     };
 
-    console.log(
-      `Attempting upsert with ${JSON.stringify(requestParams, null, 2)}`
-    );
+    console.log(`Upserting: ${JSON.stringify(requestParams, null, 2)}`);
 
     return new Promise((resolve, reject) => {
       request(requestParams, (error, response, body) => {
@@ -252,15 +259,13 @@ export function upsertCase(params, callback) {
         } else {
           const resp = tryJson(body);
           if (resp.length == 0) {
-            console.log(
-              `Resp was ${resp}, creating with ${JSON.stringify(data, null, 2)}`
-            );
-            resolve(createCase(data, callback)(state));
+            console.log('No case found. Performing create.');
+            resolve(createCase({ data: (state) => data }, callback)(state));
           } else if (resp.length == 1) {
-            console.log(
-              `Resp was ${resp}, updating with ${JSON.stringify(data, null, 2)}`
+            console.log('Case found. Performing update.');
+            resolve(
+              updateCase(resp[0].id, { data: (state) => data }, callback)(state)
             );
-            resolve(updateCase(resp[0].id, data, callback));
           } else {
             reject(
               'Multiple cases found. Try using another externalId and ensure that it is unique.'
@@ -274,7 +279,7 @@ export function upsertCase(params, callback) {
 
 export function post(path, params) {
   return (state) => {
-    httpPost(path, params)(state);
+    return httpPost(path, params)(state);
   };
 }
 
