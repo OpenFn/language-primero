@@ -3,6 +3,7 @@ import {
   execute as commonExecute,
   expandReferences,
   composeNextState,
+  arrayToString,
 } from 'language-common';
 import Adaptor from 'language-http';
 const httpPost = Adaptor.post;
@@ -104,9 +105,6 @@ export function getCases(query) {
 
     const params = {
       method: 'GET',
-      // NOTE: these filters do not seem to work as specified in the Primero API docs.
-      // url: `${url}/api/cases?remote=true&scope[transitions_created_at]=date_range||17-Mar-2020.17-Mar-2020&scope[service_response_types]=list||referral_to_oscar`,
-      // url: `${url}/api/cases\?remote\=true\&scope%5Btransitions_created_at%5D\=17-Mar-2008.17-Mar-2008\&scope%5Bservice_response_types%5D\=referral_to_oscar`,
       url: `${url}/api/cases`,
       jar: true,
       qs: query,
@@ -118,6 +116,9 @@ export function getCases(query) {
         if (error) {
           reject(error);
         } else {
+          console.log(
+            `Primero says: '${response.statusCode} ${response.statusMessage}'`
+          );
           const resp = tryJson(body);
           console.log(
             `${resp.length} cases retreived from request: ${JSON.stringify(
@@ -231,16 +232,18 @@ export function updateCase(id, params, callback) {
 export function upsertCase(params, callback) {
   return (state) => {
     const { url } = state.configuration;
-    const { data, externalId } = expandReferences(params)(state);
+    const { data, externalIds } = expandReferences(params)(state);
 
     var qs = {
       remote: true,
-      locale: 'en',
-      mobile: 'true',
-      scope: {},
+      scope: {
+        or: {},
+      },
     };
 
-    qs.scope[externalId] = `list||${data[externalId]}`;
+    externalIds.map(
+      (x) => (qs.scope.or[x] = `or_op||${data[x]}`)
+    );
 
     const requestParams = {
       method: 'GET',
