@@ -3,11 +3,9 @@ import {
   execute as commonExecute,
   expandReferences,
   composeNextState,
-  arrayToString,
 } from 'language-common';
-import Adaptor from 'language-http';
-const httpPost = Adaptor.post;
-import { assembleError, tryJson, setUrl } from './Utils';
+import HttpAdaptor from 'language-http';
+import { assembleError, tryJson } from './Utils';
 import request from 'request';
 
 /**
@@ -96,7 +94,7 @@ function cleanupState(state) {
  *    },
  *  })
  * @function
- * @param {object} params - an object with a query param at minimum.
+ * @param {object} query - an object with a query param at minimum.
  * @returns {Operation}
  */
 export function getCases(query) {
@@ -297,7 +295,7 @@ export function upsertCase(params, callback) {
  */
 export function post(path, params) {
   return (state) => {
-    return httpPost(path, params)(state);
+    return HttpAdaptor.post(path, params)(state);
   };
 }
 
