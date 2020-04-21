@@ -280,6 +280,21 @@ export function upsertCase(params, callback) {
   };
 }
 
+/**
+ * Make a POST request
+ * @public
+ * @example
+ *  post("/myendpoint", {
+ *      body: {"foo": "bar"},
+ *      headers: {"content-type": "json"},
+ *      authentication: {username: "user", password: "pass"},
+ *    }
+ *  )
+ * @function
+ * @param {string} path - Path to resource
+ * @param {object} params - Body, Query, Headers and Authentication parameters
+ * @returns {Operation}
+ */
 export function post(path, params) {
   return (state) => {
     return httpPost(path, params)(state);
