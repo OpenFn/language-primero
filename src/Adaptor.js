@@ -92,12 +92,18 @@ function cleanupState(state) {
  *      transitions_created_at: 'dateRange||17-Mar-2008.17-Mar-2008',
  *      service_response_types: 'list||referral_to_oscar',
  *    },
+ *  }, state => {
+ *    state.lastFetch =
+ *      state.data.map(x => x.updatedAt)
+ *      .sort((a, b) => (b-a))
+ *    return state
  *  })
  * @function
  * @param {object} query - an object with a query param at minimum.
+ * @param {function} callback - (Optional) Callback function
  * @returns {Operation}
  */
-export function getCases(query) {
+export function getCases(query, callback) {
   return (state) => {
     const { url, user, password } = state.configuration;
 
@@ -125,7 +131,9 @@ export function getCases(query) {
               2
             )}.`
           );
-          resolve(composeNextState(state, resp));
+          const nextState = composeNextState(state, resp);
+          if (callback) resolve(callback(nextState));
+          resolve(nextState);
         }
       });
     });
@@ -239,9 +247,7 @@ export function upsertCase(params, callback) {
       },
     };
 
-    externalIds.map(
-      (x) => (qs.scope.or[x] = `or_op||${data[x]}`)
-    );
+    externalIds.map((x) => (qs.scope.or[x] = `or_op||${data[x]}`));
 
     const requestParams = {
       method: 'GET',
