@@ -271,7 +271,7 @@ export function upsertCase(params, callback) {
           } else if (resp.length == 1) {
             console.log('Case found. Performing update.');
             resolve(
-              updateCase(resp[0].id, { data: (state) => data }, callback)(state)
+              updateCase(resp[0]._id, { data: (state) => data }, callback)(state)
             );
           } else {
             reject(
