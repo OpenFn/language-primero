@@ -125,7 +125,7 @@ export function getCases(query, callback) {
           );
           const resp = tryJson(body);
           console.log(
-            `${resp.length} cases retreived from request: ${JSON.stringify(
+            `${resp.length} cases retrieved from request: ${JSON.stringify(
               response.request,
               null,
               2
@@ -171,11 +171,7 @@ export function createCase(params, callback) {
         } else {
           const resp = tryJson(body);
           console.log(
-            `Post succeeded. Response body from server: ${JSON.stringify(
-              resp.body,
-              null,
-              2
-            )}`
+            `Post succeeded: ${response.statusCode} ${response.statusMessage}`
           );
           const nextState = composeNextState(state, resp.body);
           if (callback) resolve(callback(nextState));
@@ -271,7 +267,11 @@ export function upsertCase(params, callback) {
           } else if (resp.length == 1) {
             console.log('Case found. Performing update.');
             resolve(
-              updateCase(resp[0]._id, { data: (state) => data }, callback)(state)
+              updateCase(
+                resp[0]._id,
+                { data: (state) => data },
+                callback
+              )(state)
             );
           } else {
             reject(
