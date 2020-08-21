@@ -26,7 +26,7 @@ export function execute(...operations) {
     data: null,
   };
 
-  return (state) => {
+  return state => {
     return commonExecute(
       login,
       ...operations,
@@ -104,7 +104,7 @@ function cleanupState(state) {
  * @returns {Operation}
  */
 export function getCases(query, callback) {
-  return (state) => {
+  return state => {
     const { url, user, password } = state.configuration;
 
     const params = {
@@ -151,7 +151,7 @@ export function getCases(query, callback) {
  * @returns {Operation}
  */
 export function createCase(params, callback) {
-  return (state) => {
+  return state => {
     const { url } = state.configuration;
 
     const { data } = expandReferences(params)(state);
@@ -194,7 +194,7 @@ export function createCase(params, callback) {
  * @returns {Operation}
  */
 export function updateCase(id, params, callback) {
-  return (state) => {
+  return state => {
     const { url } = state.configuration;
     const { data } = expandReferences(params)(state);
 
@@ -225,14 +225,14 @@ export function updateCase(id, params, callback) {
  * Upsert case to Primero
  * @public
  * @example
- *  upsertCase({externalId: "123", data: {...}})
+ *  upsertCase({externalIds: ['case_id'], data: {...}})
  * @function
  * @param {object} params - an object with an externalId and some case data.
  * @param {function} callback - (Optional) Callback function
  * @returns {Operation}
  */
 export function upsertCase(params, callback) {
-  return (state) => {
+  return state => {
     const { url } = state.configuration;
     const { data, externalIds } = expandReferences(params)(state);
 
@@ -243,7 +243,12 @@ export function upsertCase(params, callback) {
       },
     };
 
-    externalIds.map((x) => (qs.scope.or[x] = `or_op||${data[x]}`));
+    externalIds.map(x => {
+      // For every externalId field that is provided, add a key to the
+      // scope object in our qs (queryString) and set the value for that key to
+      // whatever value is found IN THE DATA for the given externalId.
+      return (qs.scope.or[x] = `or_op||${data[x]}`);
+    });
 
     const requestParams = {
       method: 'GET',
@@ -263,15 +268,11 @@ export function upsertCase(params, callback) {
           const resp = tryJson(body);
           if (resp.length == 0) {
             console.log('No case found. Performing create.');
-            resolve(createCase({ data: (state) => data }, callback)(state));
+            resolve(createCase({ data: state => data }, callback)(state));
           } else if (resp.length == 1) {
             console.log('Case found. Performing update.');
             resolve(
-              updateCase(
-                resp[0]._id,
-                { data: (state) => data },
-                callback
-              )(state)
+              updateCase(resp[0]._id, { data: state => data }, callback)(state)
             );
           } else {
             reject(
@@ -300,7 +301,7 @@ export function upsertCase(params, callback) {
  * @returns {Operation}
  */
 export function post(path, params) {
-  return (state) => {
+  return state => {
     return HttpAdaptor.post(path, params)(state);
   };
 }
