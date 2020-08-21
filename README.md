@@ -1,21 +1,27 @@
 # Language Primero [![Build Status](https://travis-ci.org/OpenFn/language-primero.svg?branch=master)](https://travis-ci.org/OpenFn/language-primero)
 
-Language Pack for building expressions and operations for use with UNICEF's Primero API.
+Language Pack for building expressions and operations for use with UNICEF's
+Primero API.
 
-## Documentation
+## Primero API Versions
 
-## Fetch
+`v1.0.7` of this adaptor was built for the Primero `v1.1` API. In the future, we
+may be able to provide complete `v1` and `v2` Primero API compatibility in
+`language-primero-v1.1` but are waiting to see if significant changes are
+required related to authentication.
 
-#### sample configuration
+[Primero API v1.1 Documentation](https://docs.google.com/document/d/1jpaT2_UBBnc3PxPYlLMBEzNUkyfuxRZiksywG5MKM0Q/edit)
 
-```js
-{
-  "username": "taylor@openfn.org",
-  "password": "supersecret",
-  "baseUrl": "https://instance_name.surveycto.com",
-  "authType": "digest"
-}
-```
+#### Primero Authentication Strategies
+
+The Primero team is considering a shift to Microsoft Azure Active Directory B2C
+for auth. We can likely accommodate this with a similar pattern as has been used
+in our Microsoft Dynamics, Github, or Google Sheets adaptors, but we'll need to
+await final doucmentation for Primero's `v2` API before making changes.
+
+[Azure Active Directory B2C](https://docs.microsoft.com/en-us/azure/active-directory-b2c/)
+
+## Technical Documentation
 
 ### Get cases from Primero with query parameters
 
