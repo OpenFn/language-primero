@@ -3,7 +3,11 @@
 Language Pack for building expressions and operations for use with UNICEF's
 Primero API.
 
+
+
 ## Primero API Versions
+
+### Adaptor for Primero v2.0 coming soon!
 
 `v1.0.7` of this adaptor was built for the Primero `v1.1` API. In the future, we
 may be able to provide complete `v1` and `v2` Primero API compatibility in
