@@ -272,7 +272,40 @@ export function upsertCase(params, callback) {
           } else if (resp.length == 1) {
             console.log('Case found. Performing update.');
             resolve(
-              updateCase(resp[0]._id, { data: state => data }, callback)(state)
+              updateCase(
+                resp[0]._id,
+                {
+                  data: state => {
+                    const { child } = data;
+                    // NOTE: When performing an upsert, we only add _new_
+                    // services to Primero, as defined by their "unique_id".
+                    // The logic below takes the services array returned by
+                    // Primero as the starting point, and concatenates it with a
+                    // "newServices" array, which includes only those services
+                    // whose "unique_id" values are NOT existing in the Primero
+                    // services array.
+                    const oldServices = resp[0].services_section;
+
+                    if (oldServices && oldServices.length > 0) {
+                      const serviceIds = oldServices.map(s => s.unique_id);
+
+                      const newServices = child.services_section.filter(
+                        os => !serviceIds.includes(os.unique_id)
+                      );
+
+                      const mergedServices = oldServices.concat(newServices);
+
+                      return {
+                        ...data,
+                        child: { ...child, services_section: mergedServices },
+                      };
+                    }
+
+                    return data;
+                  },
+                },
+                callback
+              )(state)
             );
           } else {
             reject(
