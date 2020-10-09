@@ -1,4 +1,5 @@
-<img src="https://avatars2.githubusercontent.com/u/9555108?s=200&v=4" alt="alt text" height="50"> <img src="https://user-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_300,w_300,f_auto,q_auto/195711/_IMS-logos_all_TM-02_no_bg_2_rlfcbj.png" height="50">
+<img src="https://user-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_auto/195711/_IMS-logos_all_TM-02_vagcfc.png" height="100">  
+<img src="https://avatars2.githubusercontent.com/u/9555108?s=200&v=4" alt="alt text" height="50">
 
 # Language Primero [![Build Status](https://travis-ci.org/OpenFn/language-primero.svg?branch=master)](https://travis-ci.org/OpenFn/language-primero)
 
