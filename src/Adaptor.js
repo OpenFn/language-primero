@@ -4,7 +4,6 @@ import {
   expandReferences,
   composeNextState,
 } from 'language-common';
-import HttpAdaptor from 'language-http';
 import { assembleError, tryJson } from './Utils';
 import request from 'request';
 
@@ -45,15 +44,20 @@ export function execute(...operations) {
  */
 function login(state) {
   const { url, user, password } = state.configuration;
-
-  const params = {
-    method: 'POST',
-    url: `${url}/api/login`,
-    json: {
+  const body = JSON.stringify({
+    user: {
       user_name: user,
       password,
     },
-    jar: true,
+  });
+
+  const params = {
+    method: 'POST',
+    url: `${url}/api/v2/tokens`,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body,
   };
 
   return new Promise((resolve, reject) => {
@@ -105,12 +109,15 @@ function cleanupState(state) {
  */
 export function getCases(query, callback) {
   return state => {
-    const { url, user, password } = state.configuration;
+    const { url } = state.configuration;
+    const { token } = state.auth;
 
     const params = {
       method: 'GET',
-      url: `${url}/api/cases`,
-      jar: true,
+      url: `${url}/api/v2/cases`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       qs: query,
     };
 
@@ -125,13 +132,13 @@ export function getCases(query, callback) {
           );
           const resp = tryJson(body);
           console.log(
-            `${resp.length} cases retrieved from request: ${JSON.stringify(
+            `${resp.data.length} cases retrieved from request: ${JSON.stringify(
               response.request,
               null,
               2
             )}.`
           );
-          const nextState = composeNextState(state, resp);
+          const nextState = composeNextState(state, resp.data);
           if (callback) resolve(callback(nextState));
           resolve(nextState);
         }
@@ -144,7 +151,16 @@ export function getCases(query, callback) {
  * Create case in Primero
  * @public
  * @example
- *  createCase(params, callback)
+ *  createCase({
+ *    data: state => data {
+ *      "enabled": true,
+ *      "age": 15,
+ *      "sex": "male",
+ *      "name": "Alex",
+ *      "status": "open",
+ *      "case_id": "6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz",
+ *      "owned_by": "primero_cp"
+ *    }}, callback)
  * @function
  * @param {object} params - an object with some case data.
  * @param {function} callback - (Optional) Callback function
@@ -155,17 +171,25 @@ export function createCase(params, callback) {
     const { url } = state.configuration;
 
     const { data } = expandReferences(params)(state);
+    const { token } = state.auth;
 
+    const body = JSON.stringify({ data: data });
     const requestParams = {
       method: 'POST',
-      url: `${url}/api/cases`,
-      json: data,
-      jar: true,
+      url: `${url}/api/v2/cases`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        options: {
+          successCodes: [200, 201, 202, 203, 204],
+        },
+      },
+      body,
     };
 
     return new Promise((resolve, reject) => {
       request(requestParams, (error, response, body) => {
-        error = assembleError({ error, response, params: {} });
+        error = assembleError({ error, response, params: requestParams });
         if (error) {
           reject(error);
         } else {
@@ -173,7 +197,7 @@ export function createCase(params, callback) {
           console.log(
             `Post succeeded: ${response.statusCode} ${response.statusMessage}`
           );
-          const nextState = composeNextState(state, resp.body);
+          const nextState = composeNextState(state, resp.data.body);
           if (callback) resolve(callback(nextState));
           resolve(nextState);
         }
@@ -186,7 +210,14 @@ export function createCase(params, callback) {
  * Update case in Primero
  * @public
  * @example
- *  updateCase(id, params, callback)
+ *  updateCase("7ed1d49f-14c7-4181-8d83-dc8ed1699f08", {
+ *    data: state => data {
+ *      "age": 20,
+ *      "sex": "male",
+ *      "name": "Alex",
+ *      "status": "open",
+ *      "case_id": "6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz",
+ *    }}, callback)
  * @function
  * @param {string} id - an ID to use for the update.
  * @param {object} params - an object with some case data.
@@ -197,12 +228,15 @@ export function updateCase(id, params, callback) {
   return state => {
     const { url } = state.configuration;
     const { data } = expandReferences(params)(state);
+    const { token } = state.auth;
 
     const requestParams = {
       method: 'PATCH',
-      url: `${url}/api/cases/${id}`,
-      json: data,
-      jar: true,
+      url: `${url}/api/v2/cases/${id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
     };
 
     return new Promise((resolve, reject) => {
@@ -212,7 +246,7 @@ export function updateCase(id, params, callback) {
           reject(error);
         } else {
           const resp = tryJson(body);
-          const nextState = composeNextState(state, resp);
+          const nextState = composeNextState(state, resp.data);
           if (callback) resolve(callback(nextState));
           resolve(nextState);
         }
@@ -235,25 +269,26 @@ export function upsertCase(params, callback) {
   return state => {
     const { url } = state.configuration;
     const { data, externalIds } = expandReferences(params)(state);
+    const { token } = state.auth;
 
     var qs = {
       remote: true,
-      scope: {
-        or: {},
-      },
+      scope: {},
     };
 
     externalIds.map(x => {
       // For every externalId field that is provided, add a key to the
       // scope object in our qs (queryString) and set the value for that key to
       // whatever value is found IN THE DATA for the given externalId.
-      return (qs.scope.or[x] = `or_op||${data[x]}`);
+      return (qs[x] = `${data[x]}`);
     });
 
     const requestParams = {
       method: 'GET',
-      url: `${url}/api/cases`,
-      jar: true,
+      url: `${url}/api/v2/cases`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       qs,
     };
 
@@ -266,16 +301,17 @@ export function upsertCase(params, callback) {
           reject(error);
         } else {
           const resp = tryJson(body);
-          if (resp.length == 0) {
+          if (resp.data.length == 0) {
             console.log('No case found. Performing create.');
             resolve(createCase({ data: state => data }, callback)(state));
-          } else if (resp.length == 1) {
+          } else if (resp.data.length == 1) {
             console.log('Case found. Performing update.');
             resolve(
               updateCase(
-                resp[0]._id,
+                resp.data[0].id,
                 {
                   data: state => {
+                    // =========== Need clarification on this. Should we test when 'child' does not exist? ===========
                     const { child } = data;
                     // NOTE: When performing an upsert, we only add _new_
                     // services to Primero, as defined by their "unique_id".
@@ -284,7 +320,7 @@ export function upsertCase(params, callback) {
                     // "newServices" array, which includes only those services
                     // whose "unique_id" values are NOT existing in the Primero
                     // services array.
-                    const oldServices = resp[0].services_section;
+                    const oldServices = resp.data[0].services_section;
 
                     if (oldServices && oldServices.length > 0) {
                       const serviceIds = oldServices.map(s => s.unique_id);
@@ -315,27 +351,6 @@ export function upsertCase(params, callback) {
         }
       });
     });
-  };
-}
-
-/**
- * Make a POST request
- * @public
- * @example
- *  post("/myendpoint", {
- *      body: {"foo": "bar"},
- *      headers: {"content-type": "json"},
- *      authentication: {username: "user", password: "pass"},
- *    }
- *  )
- * @function
- * @param {string} path - Path to resource
- * @param {object} params - Body, Query, Headers and Authentication parameters
- * @returns {Operation}
- */
-export function post(path, params) {
-  return state => {
-    return HttpAdaptor.post(path, params)(state);
   };
 }
 
