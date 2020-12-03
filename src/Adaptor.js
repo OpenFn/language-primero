@@ -92,7 +92,7 @@ function cleanupState(state) {
  * @example
  *  getCases({
  *    remote: true,
- *    case_id: '6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz' 
+ *    case_id: '6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz'
  *    query: 'sex=male' // optional
  *  }, callback)
  * @function
@@ -252,8 +252,8 @@ export function updateCase(id, params, callback) {
  * Upsert case to Primero
  * @public
  * @example
- * upsertCase({ 
- *    externalIds: ['case_id'], 
+ * upsertCase({
+ *    externalIds: ['case_id'],
  *    data: state => data {
  *      "age": 20,
  *      "sex": "male",
@@ -375,7 +375,7 @@ export function getReferrals(recordId, callback) {
       url: `${url}/api/v2/cases/${recordId}/referrals`,
       headers: {
         Authorization: `Bearer ${token}`,
-      }
+      },
     };
 
     return new Promise((resolve, reject) => {
@@ -389,7 +389,9 @@ export function getReferrals(recordId, callback) {
           );
           const resp = tryJson(body);
           console.log(
-            `${resp.data.length} referrals retrieved from request: ${JSON.stringify(
+            `${
+              resp.data.length
+            } referrals retrieved from request: ${JSON.stringify(
               response.request,
               null,
               2
@@ -408,7 +410,7 @@ export function getReferrals(recordId, callback) {
  * Create case in Primero
  * @public
  * @example
- *  createReferrals({   
+ *  createReferrals({
  *    data: {
  *     "ids": ['case_id'],
  *     "transitioned_to": "primero_cp",
