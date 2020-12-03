@@ -19,7 +19,7 @@ export function setAuth(configuration, manualAuth) {
 export function assembleError({ response, error, params }) {
   if (response) {
     const customCodes = params.options && params.options.successCodes;
-    if ((customCodes || [200, 201, 202]).indexOf(response.statusCode) > -1)
+    if ((customCodes || [200, 201, 202, 204]).indexOf(response.statusCode) > -1)
       return false;
   }
   if (error) return error;
