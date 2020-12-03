@@ -92,16 +92,9 @@ function cleanupState(state) {
  * @example
  *  getCases({
  *    remote: true,
- *    scope: {
- *      transitions_created_at: 'dateRange||17-Mar-2008.17-Mar-2008',
- *      service_response_types: 'list||referral_to_oscar',
- *    },
- *  }, state => {
- *    state.lastFetch =
- *      state.data.map(x => x.updatedAt)
- *      .sort((a, b) => (b-a))
- *    return state
- *  })
+ *    case_id: '6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz' 
+ *    query: 'sex=male' // optional
+ *  }, callback)
  * @function
  * @param {object} query - an object with a query param at minimum.
  * @param {function} callback - (Optional) Callback function
@@ -259,7 +252,15 @@ export function updateCase(id, params, callback) {
  * Upsert case to Primero
  * @public
  * @example
- *  upsertCase({externalIds: ['case_id'], data: {...}})
+ * upsertCase({ 
+ *    externalIds: ['case_id'], 
+ *    data: state => data {
+ *      "age": 20,
+ *      "sex": "male",
+ *      "name": "Alex",
+ *      "status": "open",
+ *      "case_id": "6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz",
+ *    }}, callback);
  * @function
  * @param {object} params - an object with an externalId and some case data.
  * @param {function} callback - (Optional) Callback function
@@ -348,6 +349,110 @@ export function upsertCase(params, callback) {
               'Multiple cases found. Try using another externalId and ensure that it is unique.'
             );
           }
+        }
+      });
+    });
+  };
+}
+
+/**
+ * Get referrals for a specific case in Primero
+ * @public
+ * @example
+ *  getReferrals("7ed1d49f-14c7-4181-8d83-dc8ed1699f08", callback)
+ * @function
+ * @param {string} recordId - an ID to use for fetching referrals.
+ * @param {function} callback - (Optional) Callback function
+ * @returns {Operation}
+ */
+export function getReferrals(recordId, callback) {
+  return state => {
+    const { url } = state.configuration;
+    const { token } = state.auth;
+
+    const params = {
+      method: 'GET',
+      url: `${url}/api/v2/cases/${recordId}/referrals`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    };
+
+    return new Promise((resolve, reject) => {
+      request(params, function (error, response, body) {
+        error = assembleError({ error, response, params });
+        if (error) {
+          reject(error);
+        } else {
+          console.log(
+            `Primero says: '${response.statusCode} ${response.statusMessage}'`
+          );
+          const resp = tryJson(body);
+          console.log(
+            `${resp.data.length} referrals retrieved from request: ${JSON.stringify(
+              response.request,
+              null,
+              2
+            )}.`
+          );
+          const nextState = composeNextState(state, resp.data);
+          if (callback) resolve(callback(nextState));
+          resolve(nextState);
+        }
+      });
+    });
+  };
+}
+
+/**
+ * Create case in Primero
+ * @public
+ * @example
+ *  createReferrals({   
+ *    data: {
+ *     "ids": ['case_id'],
+ *     "transitioned_to": "primero_cp",
+ *     "notes": "Creating a referral"
+ *    }}, callback)
+ * @function
+ * @param {object} params - an object with some case data.
+ * @param {function} callback - (Optional) Callback function
+ * @returns {Operation}
+ */
+export function createReferrals(params, callback) {
+  return state => {
+    const { url } = state.configuration;
+
+    const { data } = expandReferences(params)(state);
+    const { token } = state.auth;
+
+    const body = JSON.stringify({ data: data });
+    const requestParams = {
+      method: 'POST',
+      url: `${url}/api/v2/cases/referrals`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        options: {
+          successCodes: [200, 201, 202, 203, 204],
+        },
+      },
+      body,
+    };
+
+    return new Promise((resolve, reject) => {
+      request(requestParams, (error, response, body) => {
+        error = assembleError({ error, response, params: requestParams });
+        if (error) {
+          reject(error);
+        } else {
+          const resp = tryJson(body);
+          console.log(
+            `Post succeeded: ${response.statusCode} ${response.statusMessage}`
+          );
+          const nextState = composeNextState(state, resp.data.body);
+          if (callback) resolve(callback(nextState));
+          resolve(nextState);
         }
       });
     });
