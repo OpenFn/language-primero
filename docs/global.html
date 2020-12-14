@@ -205,7 +205,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line161">line 161</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line165">line 165</a>
     </li></ul></dd>
     
 
@@ -388,7 +388,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line234">line 234</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line240">line 240</a>
     </li></ul></dd>
     
 
@@ -437,7 +437,204 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>createCase(params, callback)</code></pre>
+    <pre class="prettyprint"><code>createCase({
+   data: state => data {
+     "enabled": true,
+     "age": 15,
+     "sex": "male",
+     "name": "Alex",
+     "status": "open",
+     "case_id": "6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz",
+     "owned_by": "primero_cp"
+   }}, callback)</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="createReferrals"><span class="type-signature"></span>createReferrals<span class="signature">(params, callback)</span><span class="type-signature"> &rarr; {Operation}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Create case in Primero
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">an object with some case data.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">(Optional) Callback function</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line511">line 511</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Operation</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>createReferrals({
+   data: {
+    "ids": ['case_id'],
+    "transitioned_to": "primero_cp",
+    "notes": "Creating a referral"
+   }}, callback)</code></pre>
 
 
 
@@ -549,7 +746,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line95">line 95</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -735,7 +932,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line188">line 188</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line185">line 185</a>
     </li></ul></dd>
     
 
@@ -786,16 +983,192 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <pre class="prettyprint"><code>getCases({
    remote: true,
-   scope: {
-     transitions_created_at: 'dateRange||17-Mar-2008.17-Mar-2008',
-     service_response_types: 'list||referral_to_oscar',
-   },
- }, state => {
-   state.lastFetch =
-     state.data.map(x => x.updatedAt)
-     .sort((a, b) => (b-a))
-   return state
- })</code></pre>
+   case_id: '6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz'
+   query: 'sex=male' // optional
+ }, callback)</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getReferrals"><span class="type-signature"></span>getReferrals<span class="signature">(recordId, callback)</span><span class="type-signature"> &rarr; {Operation}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Get referrals for a specific case in Primero
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>recordId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">an ID to use for fetching referrals.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">(Optional) Callback function</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line461">line 461</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Operation</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>getReferrals("7ed1d49f-14c7-4181-8d83-dc8ed1699f08", callback)</code></pre>
 
 
 
@@ -906,7 +1279,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line118">line 118</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line117">line 117</a>
     </li></ul></dd>
     
 
@@ -956,194 +1329,6 @@ Wraps `language-common/execute`, and prepends initial state for http.
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>login(state)</code></pre>
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="post"><span class="type-signature"></span>post<span class="signature">(path, params)</span><span class="type-signature"> &rarr; {Operation}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Make a POST request
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>path</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Path to resource</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>params</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Body, Query, Headers and Authentication parameters</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line430">line 430</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Operation</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>post("/myendpoint", {
-     body: {"foo": "bar"},
-     headers: {"content-type": "json"},
-     authentication: {username: "user", password: "pass"},
-   }
- )</code></pre>
 
 
 
@@ -1300,7 +1485,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line281">line 281</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line304">line 304</a>
     </li></ul></dd>
     
 
@@ -1349,7 +1534,14 @@ Wraps `language-common/execute`, and prepends initial state for http.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>updateCase(id, params, callback)</code></pre>
+    <pre class="prettyprint"><code>updateCase("7ed1d49f-14c7-4181-8d83-dc8ed1699f08", {
+   data: state => data {
+     "age": 20,
+     "sex": "male",
+     "name": "Alex",
+     "status": "open",
+     "case_id": "6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz",
+   }}, callback)</code></pre>
 
 
 
@@ -1483,7 +1675,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line326">line 326</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line360">line 360</a>
     </li></ul></dd>
     
 
@@ -1532,7 +1724,15 @@ Wraps `language-common/execute`, and prepends initial state for http.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>upsertCase({externalIds: ['case_id'], data: {...}})</code></pre>
+    <pre class="prettyprint"><code>upsertCase({
+   externalIds: ['case_id'],
+   data: state => data {
+     "age": 20,
+     "sex": "male",
+     "name": "Alex",
+     "status": "open",
+     "case_id": "6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz",
+   }}, callback);</code></pre>
 
 
 
@@ -1552,13 +1752,13 @@ Wraps `language-common/execute`, and prepends initial state for http.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#cleanupState">cleanupState</a></li><li><a href="global.html#createCase">createCase</a></li><li><a href="global.html#execute">execute</a></li><li><a href="global.html#getCases">getCases</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#post">post</a></li><li><a href="global.html#updateCase">updateCase</a></li><li><a href="global.html#upsertCase">upsertCase</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#cleanupState">cleanupState</a></li><li><a href="global.html#createCase">createCase</a></li><li><a href="global.html#createReferrals">createReferrals</a></li><li><a href="global.html#execute">execute</a></li><li><a href="global.html#getCases">getCases</a></li><li><a href="global.html#getReferrals">getReferrals</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#updateCase">updateCase</a></li><li><a href="global.html#upsertCase">upsertCase</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Oct 09 2020 14:25:50 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Dec 14 2020 11:26:10 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
