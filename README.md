@@ -26,6 +26,22 @@ await final doucmentation for Primero's `v2` API before making changes.
 
 ## Technical Documentation
 
+### Sample State
+
+```json
+{
+  "configuration": {
+    "user, password": "admin",
+    "password": "district",
+    "url": "https://some-primero-instance.unicef.org"
+  },
+  "data": {
+    "a": 1,
+    "b": 2
+  }
+}
+```
+
 ### Get cases from Primero with query parameters
 
 Use this function to get cases from Primero based on a set of query parameters.
