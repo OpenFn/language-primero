@@ -6,12 +6,9 @@ An OpenFn **_adaptor_** for building integration jobs for use with UNICEF's Prim
 
 ## Primero API Versions
 
-### Adaptor for Primero v2.0 coming soon!
+### Adaptor for Primero v1.0 still available on the `v1` branch.
 
-`v1.0.7` of this adaptor was built for the Primero `v1.1` API. In the future, we
-may be able to provide complete `v1` and `v2` Primero API compatibility in
-`language-primero-v1.1` but are waiting to see if significant changes are
-required related to authentication.
+`v1.0.7` of this adaptor was built for the Primero `v1.1` API.
 
 [Primero API v1.1 Documentation](https://docs.google.com/document/d/1jpaT2_UBBnc3PxPYlLMBEzNUkyfuxRZiksywG5MKM0Q/edit)
 
