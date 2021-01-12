@@ -8,7 +8,7 @@ An OpenFn **_adaptor_** for building integration jobs for use with UNICEF's Prim
 
 ### Adaptor for Primero v1.0 still available on the `v1` branch.
 
-`v1.0.7` of this adaptor was built for the Primero `v1.1` API.
+`v1.0.7` of this adaptor was built for the Primero `v1.1` API: https://github.com/OpenFn/language-primero/blob/v1/README.md
 
 [Primero API v1.1 Documentation](https://docs.google.com/document/d/1jpaT2_UBBnc3PxPYlLMBEzNUkyfuxRZiksywG5MKM0Q/edit)
 
