@@ -28,8 +28,8 @@ await final doucmentation for Primero's `v2` API before making changes.
 ```json
 {
   "configuration": {
-    "user, password": "admin",
-    "password": "district",
+    "user": "admin",
+    "password": "admin",
     "url": "https://some-primero-instance.unicef.org"
   },
   "data": {
@@ -102,8 +102,7 @@ Use this function to update an existing case from Primero. In this implementatio
 
 ```js
 updateCase(
-  {
-    id: "case_id",
+    "case_id", {
     data: {
       remote: true,
       oscar_number: c.oscar_number,
@@ -138,6 +137,10 @@ upsertCase(
         transitions: [ ... ]
       },
     }
+  },
+  state => {
+    console.log(state.data);
+    return state;
   }
 );
 ```
@@ -160,9 +163,11 @@ Use this function to bulk refer to one or multiple cases from Primero
 ```js
 createReferrals(
   {
-    ids: ['case_id'],
-    transitioned_to: 'primero_cp',
-    notes: 'Creating a referral',
+    data: {
+      ids: ['case_id'],
+      transitioned_to: 'primero_cp',
+      notes: 'Creating a referral',
+    },
   },
   state => {
     console.log('Here is the callback.');
