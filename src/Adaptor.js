@@ -3,6 +3,7 @@ import {
   execute as commonExecute,
   expandReferences,
   composeNextState,
+  http,
 } from 'language-common';
 import HttpAdaptor from 'language-http';
 import { assembleError, tryJson } from './Utils';
@@ -346,6 +347,7 @@ export {
   each,
   field,
   fields,
+  http,
   lastReferenceValue,
   merge,
   sourceValue,
