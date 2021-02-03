@@ -223,13 +223,16 @@ export function updateCase(id, params, callback) {
     const { data } = expandReferences(params)(state);
     const { token } = state.auth;
 
+    const body = JSON.stringify({ data: data });
+
     const requestParams = {
       method: 'PATCH',
       url: `${url}/api/v2/cases/${id}`,
       headers: {
         Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body,
     };
 
     return new Promise((resolve, reject) => {
