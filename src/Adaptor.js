@@ -166,18 +166,16 @@ export function createCase(params, callback) {
     const { data } = expandReferences(params)(state);
     const { token } = state.auth;
 
-    const body = JSON.stringify({ data: data });
     const requestParams = {
       method: 'POST',
       url: `${url}/api/v2/cases`,
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
         options: {
           successCodes: [200, 201, 202, 203, 204],
         },
       },
-      body,
+      json: { data: data },
     };
 
     return new Promise((resolve, reject) => {
@@ -223,16 +221,13 @@ export function updateCase(id, params, callback) {
     const { data } = expandReferences(params)(state);
     const { token } = state.auth;
 
-    const body = JSON.stringify({ data: data });
-
     const requestParams = {
       method: 'PATCH',
       url: `${url}/api/v2/cases/${id}`,
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
       },
-      body,
+      json: { data: data },
     };
 
     return new Promise((resolve, reject) => {
@@ -431,18 +426,16 @@ export function createReferrals(params, callback) {
     const { data } = expandReferences(params)(state);
     const { token } = state.auth;
 
-    const body = JSON.stringify({ data: data });
     const requestParams = {
       method: 'POST',
       url: `${url}/api/v2/cases/referrals`,
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
         options: {
           successCodes: [200, 201, 202, 203, 204],
         },
       },
-      body,
+      json: { data: data },
     };
 
     return new Promise((resolve, reject) => {
