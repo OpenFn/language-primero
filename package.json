@@ -1,6 +1,6 @@
 {
   "name": "language-primero",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A UNICEF Primero language package for use with Open Function",
   "main": "lib/index.js",
   "scripts": {
