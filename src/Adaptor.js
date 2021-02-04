@@ -237,7 +237,7 @@ export function updateCase(id, params, callback) {
           reject(error);
         } else {
           const resp = tryJson(body);
-          const nextState = composeNextState(state, resp.data);
+          const nextState = composeNextState(state, resp.body.data);
           if (callback) resolve(callback(nextState));
           resolve(nextState);
         }
