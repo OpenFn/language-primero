@@ -35,6 +35,25 @@ export function execute(...operations) {
 }
 
 /**
+ * Generate an auth string to support multiple types of auth credentials.
+ * @example
+ * generateAuthString(state)
+ * @function
+ * @param {State} state
+ * @returns {string}
+ */
+function generateAuthString(state) {
+  const { auth, configuration } = state;
+  if (configuration.jwt) {
+    const { token } = auth;
+    return `Bearer ${token}`;
+  }
+
+  const { username, password } = configuration;
+  return 'Basic ' + Buffer(`${username}:${password}`).toString('base64');
+}
+
+/**
  * Logs in to Primero.
  * @example
  *  login(state)
@@ -103,13 +122,12 @@ function cleanupState(state) {
 export function getCases(query, callback) {
   return state => {
     const { url } = state.configuration;
-    const { token } = state.auth;
 
     const params = {
       method: 'GET',
       url: `${url}/api/v2/cases`,
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: generateAuthString(state),
       },
       qs: query,
     };
@@ -164,13 +182,12 @@ export function createCase(params, callback) {
     const { url } = state.configuration;
 
     const { data } = expandReferences(params)(state);
-    const { token } = state.auth;
 
     const requestParams = {
       method: 'POST',
       url: `${url}/api/v2/cases`,
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: generateAuthString(state),
         options: {
           successCodes: [200, 201, 202, 203, 204],
         },
@@ -219,13 +236,12 @@ export function updateCase(id, params, callback) {
   return state => {
     const { url } = state.configuration;
     const { data } = expandReferences(params)(state);
-    const { token } = state.auth;
 
     const requestParams = {
       method: 'PATCH',
       url: `${url}/api/v2/cases/${id}`,
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: generateAuthString(state),
       },
       json: { data: data },
     };
@@ -268,7 +284,6 @@ export function upsertCase(params, callback) {
   return state => {
     const { url } = state.configuration;
     const { data, externalIds } = expandReferences(params)(state);
-    const { token } = state.auth;
 
     var qs = {
       remote: true,
@@ -286,7 +301,7 @@ export function upsertCase(params, callback) {
       method: 'GET',
       url: `${url}/api/v2/cases`,
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: generateAuthString(state),
       },
       qs,
     };
@@ -366,13 +381,12 @@ export function upsertCase(params, callback) {
 export function getReferrals(recordId, callback) {
   return state => {
     const { url } = state.configuration;
-    const { token } = state.auth;
 
     const params = {
       method: 'GET',
       url: `${url}/api/v2/cases/${recordId}/referrals`,
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: generateAuthString(state),
       },
     };
 
@@ -424,13 +438,12 @@ export function createReferrals(params, callback) {
     const { url } = state.configuration;
 
     const { data } = expandReferences(params)(state);
-    const { token } = state.auth;
 
     const requestParams = {
       method: 'POST',
       url: `${url}/api/v2/cases/referrals`,
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: generateAuthString(state),
         options: {
           successCodes: [200, 201, 202, 203, 204],
         },
