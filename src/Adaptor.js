@@ -44,13 +44,12 @@ export function execute(...operations) {
  */
 function generateAuthString(state) {
   const { auth, configuration } = state;
-  if (configuration.jwt) {
-    const { token } = auth;
-    return `Bearer ${token}`;
+  if (configuration.basicAuth) {
+    const { user, password } = configuration;
+    return 'Basic ' + Buffer(`${user}:${password}`).toString('base64');
   }
-
-  const { user, password } = configuration;
-  return 'Basic ' + Buffer(`${user}:${password}`).toString('base64');
+  const { token } = auth;
+  return `Bearer ${token}`;
 }
 
 /**
