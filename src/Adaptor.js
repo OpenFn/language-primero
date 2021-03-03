@@ -3,7 +3,7 @@ import {
   execute as commonExecute,
   expandReferences,
   composeNextState,
-} from 'language-common';
+} from '@openfn/language-common';
 import { assembleError, tryJson } from './Utils';
 import request from 'request';
 
@@ -55,7 +55,7 @@ function generateAuthString(state) {
 /**
  * Logs in to Primero.
  * @example
- *  login(state)
+ * login(state)
  * @function
  * @param {State} state - Runtime state.
  * @returns {State}
@@ -94,7 +94,7 @@ function login(state) {
 /**
  * Removes unserializable keys from the state.
  * @example
- *  cleanupState(state)
+ * cleanupState(state)
  * @function
  * @param {State} state
  * @returns {State}
@@ -108,11 +108,11 @@ function cleanupState(state) {
  * Get cases from Primero
  * @public
  * @example
- *  getCases({
- *    remote: true,
- *    case_id: '6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz'
- *    query: 'sex=male' // optional
- *  }, callback)
+ * getCases({
+ *   remote: true,
+ *   case_id: '6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz'
+ *   query: 'sex=male' // optional
+ * }, callback)
  * @function
  * @param {object} query - an object with a query param at minimum.
  * @param {function} callback - (Optional) Callback function
@@ -161,16 +161,16 @@ export function getCases(query, callback) {
  * Create case in Primero
  * @public
  * @example
- *  createCase({
- *    data: state => data {
- *      "enabled": true,
- *      "age": 15,
- *      "sex": "male",
- *      "name": "Alex",
- *      "status": "open",
- *      "case_id": "6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz",
- *      "owned_by": "primero_cp"
- *    }}, callback)
+ * createCase({
+ *   data: state => data {
+ *     "enabled": true,
+ *     "age": 15,
+ *     "sex": "male",
+ *     "name": "Alex",
+ *     "status": "open",
+ *     "case_id": "6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz",
+ *     "owned_by": "primero_cp"
+ *   }}, callback)
  * @function
  * @param {object} params - an object with some case data.
  * @param {function} callback - (Optional) Callback function
@@ -217,14 +217,14 @@ export function createCase(params, callback) {
  * Update case in Primero
  * @public
  * @example
- *  updateCase("7ed1d49f-14c7-4181-8d83-dc8ed1699f08", {
- *    data: state => data {
- *      "age": 20,
- *      "sex": "male",
- *      "name": "Alex",
- *      "status": "open",
- *      "case_id": "6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz",
- *    }}, callback)
+ * updateCase("7ed1d49f-14c7-4181-8d83-dc8ed1699f08", {
+ *   data: state => data {
+ *     "age": 20,
+ *     "sex": "male",
+ *     "name": "Alex",
+ *     "status": "open",
+ *     "case_id": "6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz",
+ *   }}, callback)
  * @function
  * @param {string} id - an ID to use for the update.
  * @param {object} params - an object with some case data.
@@ -371,7 +371,7 @@ export function upsertCase(params, callback) {
  * Get referrals for a specific case in Primero
  * @public
  * @example
- *  getReferrals("7ed1d49f-14c7-4181-8d83-dc8ed1699f08", callback)
+ * getReferrals("7ed1d49f-14c7-4181-8d83-dc8ed1699f08", callback)
  * @function
  * @param {string} recordId - an ID to use for fetching referrals.
  * @param {function} callback - (Optional) Callback function
@@ -421,12 +421,12 @@ export function getReferrals(recordId, callback) {
  * Create case in Primero
  * @public
  * @example
- *  createReferrals({
- *    data: {
- *     "ids": ['case_id'],
- *     "transitioned_to": "primero_cp",
- *     "notes": "Creating a referral"
- *    }}, callback)
+ * createReferrals({
+ *   data: {
+ *    "ids": ['case_id'],
+ *    "transitioned_to": "primero_cp",
+ *    "notes": "Creating a referral"
+ *   }}, callback)
  * @function
  * @param {object} params - an object with some case data.
  * @param {function} callback - (Optional) Callback function
@@ -471,6 +471,7 @@ export function createReferrals(params, callback) {
 
 export {
   alterState,
+  combine,
   dataPath,
   dataValue,
   each,
@@ -480,4 +481,4 @@ export {
   lastReferenceValue,
   merge,
   sourceValue,
-} from 'language-common';
+} from 'openfn/language-common';
