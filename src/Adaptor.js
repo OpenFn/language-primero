@@ -481,4 +481,4 @@ export {
   lastReferenceValue,
   merge,
   sourceValue,
-} from 'openfn/language-common';
+} from '@openfn/language-common';
