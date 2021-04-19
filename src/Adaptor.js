@@ -204,7 +204,7 @@ export function createCase(params, callback) {
           console.log(
             `Post succeeded: ${response.statusCode} ${response.statusMessage}`
           );
-          const nextState = composeNextState(state, resp.data.body);
+          const nextState = composeNextState(state, resp.body.data);
           if (callback) resolve(callback(nextState));
           resolve(nextState);
         }
