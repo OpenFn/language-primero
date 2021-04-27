@@ -46,7 +46,7 @@ function generateAuthString(state) {
   const { auth, configuration } = state;
   if (configuration.basicAuth) {
     const { user, password } = configuration;
-    return 'Basic ' + Buffer(`${user}:${password}`).toString('base64');
+    return 'Basic ' + Buffer.from(`${user}:${password}`).toString('base64');
   }
   const { token } = auth;
   return `Bearer ${token}`;
