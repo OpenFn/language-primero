@@ -127,6 +127,7 @@ export function getCases(query, callback) {
       url: `${url}/api/v2/cases`,
       headers: {
         Authorization: generateAuthString(state),
+        'Content-Type': 'application/json',
       },
       qs: query,
     };
@@ -187,6 +188,7 @@ export function createCase(params, callback) {
       url: `${url}/api/v2/cases`,
       headers: {
         Authorization: generateAuthString(state),
+        'Content-Type': 'application/json',
         options: {
           successCodes: [200, 201, 202, 203, 204],
         },
@@ -241,6 +243,7 @@ export function updateCase(id, params, callback) {
       url: `${url}/api/v2/cases/${id}`,
       headers: {
         Authorization: generateAuthString(state),
+        'Content-Type': 'application/json',
       },
       json: { data: data },
     };
@@ -301,6 +304,7 @@ export function upsertCase(params, callback) {
       url: `${url}/api/v2/cases`,
       headers: {
         Authorization: generateAuthString(state),
+        'Content-Type': 'application/json',
       },
       qs,
     };
@@ -386,6 +390,7 @@ export function getReferrals(recordId, callback) {
       url: `${url}/api/v2/cases/${recordId}/referrals`,
       headers: {
         Authorization: generateAuthString(state),
+        'Content-Type': 'application/json',
       },
     };
 
@@ -443,6 +448,7 @@ export function createReferrals(params, callback) {
       url: `${url}/api/v2/cases/referrals`,
       headers: {
         Authorization: generateAuthString(state),
+        'Content-Type': 'application/json',
         options: {
           successCodes: [200, 201, 202, 203, 204],
         },
