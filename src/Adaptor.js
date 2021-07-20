@@ -477,6 +477,7 @@ export function createReferrals(params, callback) {
 
 export {
   alterState,
+  fn,
   combine,
   dataPath,
   dataValue,
