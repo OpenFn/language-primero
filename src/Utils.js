@@ -23,8 +23,19 @@ export function assembleError({ response, error, params }) {
       return false;
   }
   if (error) return error;
+
+  const safeRequest = {
+    ...response.request,
+    headers: 'REDACTED',
+    body: 'REDACTED',
+  };
+
   return new Error(
-    `Server responded with:  \n${JSON.stringify(response, null, 2)}`
+    `Server responded with:  \n${JSON.stringify(
+      { ...response, request: safeRequest },
+      null,
+      2
+    )}`
   );
 }
 
