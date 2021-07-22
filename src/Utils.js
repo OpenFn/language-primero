@@ -16,6 +16,12 @@ export function setAuth(configuration, manualAuth) {
   else return null;
 }
 
+export function scrubResponse(response) {
+  response.request.headers.Authorization = '--REDACTED--';
+
+  return response;
+}
+
 export function assembleError({ response, error, params }) {
   if (response) {
     const customCodes = params.options && params.options.successCodes;
@@ -24,18 +30,8 @@ export function assembleError({ response, error, params }) {
   }
   if (error) return error;
 
-  const safeRequest = {
-    ...response.request,
-    headers: 'REDACTED',
-    body: 'REDACTED',
-  };
-
   return new Error(
-    `Server responded with:  \n${JSON.stringify(
-      { ...response, request: safeRequest },
-      null,
-      2
-    )}`
+    `Server responded with:\n${JSON.stringify(response, null, 2)}`
   );
 }
 

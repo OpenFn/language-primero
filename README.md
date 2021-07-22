@@ -9,6 +9,7 @@ An OpenFn **_adaptor_** for building integration jobs for use with UNICEF's Prim
 ## Primero API Versions
 
 ### Adaptor for Primero v2.0
+
 This documentation outlines the functions available for Primero `v2.0` in the main branch. The API documentation is available at: https://github.com/primeroIMS/primero/blob/development_v2/README.md
 
 ### Adaptor for Primero v1.0 still available on the `v1` branch.
@@ -82,7 +83,7 @@ Use this function to insert a new case in Primero based on a set of Data.
 ```js
 createCase(
   {
-    data: state => data {
+    data: state => ({
       remote: true,
       enabled: true,
       age: 15,
@@ -96,7 +97,7 @@ createCase(
         services_section: [ ... ],
         transitions: [ ... ]
       },
-    }
+    })
   }
 );
 ```

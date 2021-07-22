@@ -1,10 +1,10 @@
-/** @module Adaptor */
+// /** @module Adaptor */
 import {
   execute as commonExecute,
   expandReferences,
   composeNextState,
 } from '@openfn/language-common';
-import { assembleError, tryJson } from './Utils';
+import { assembleError, scrubResponse, tryJson } from './Utils';
 import request from 'request';
 
 /**
@@ -80,6 +80,7 @@ function login(state) {
 
   return new Promise((resolve, reject) => {
     request(params, function (error, response, body) {
+      response = scrubResponse(response);
       error = assembleError({ error, response, params });
       if (error) {
         reject(error);
@@ -134,6 +135,7 @@ export function getCases(query, callback) {
 
     return new Promise((resolve, reject) => {
       request(params, function (error, response, body) {
+        response = scrubResponse(response);
         error = assembleError({ error, response, params });
         if (error) {
           reject(error);
@@ -198,6 +200,7 @@ export function createCase(params, callback) {
 
     return new Promise((resolve, reject) => {
       request(requestParams, (error, response, body) => {
+        response = scrubResponse(response);
         error = assembleError({ error, response, params: requestParams });
         if (error) {
           reject(error);
@@ -250,6 +253,7 @@ export function updateCase(id, params, callback) {
 
     return new Promise((resolve, reject) => {
       request(requestParams, (error, response, body) => {
+        response = scrubResponse(response);
         error = assembleError({ error, response, params: {} });
         if (error) {
           reject(error);
@@ -313,6 +317,7 @@ export function upsertCase(params, callback) {
 
     return new Promise((resolve, reject) => {
       request(requestParams, (error, response, body) => {
+        response = scrubResponse(response);
         error = assembleError({ error, response, params: {} });
         if (error) {
           reject(error);
@@ -396,6 +401,7 @@ export function getReferrals(recordId, callback) {
 
     return new Promise((resolve, reject) => {
       request(params, function (error, response, body) {
+        response = scrubResponse(response);
         error = assembleError({ error, response, params });
         if (error) {
           reject(error);
@@ -458,6 +464,7 @@ export function createReferrals(params, callback) {
 
     return new Promise((resolve, reject) => {
       request(requestParams, (error, response, body) => {
+        response = scrubResponse(response);
         error = assembleError({ error, response, params: requestParams });
         if (error) {
           reject(error);
