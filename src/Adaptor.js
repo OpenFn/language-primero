@@ -313,8 +313,6 @@ export function upsertCase(params, callback) {
       qs,
     };
 
-    console.log(`Upserting: ${JSON.stringify(requestParams, null, 2)}`);
-
     return new Promise((resolve, reject) => {
       request(requestParams, (error, response, body) => {
         response = scrubResponse(response);
