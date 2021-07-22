@@ -313,6 +313,11 @@ export function upsertCase(params, callback) {
       qs,
     };
 
+    // NOTE: while record_id is used in the GET, it must be dropped before -----
+    // subsequent create or update calls are made as it's not valid in Primero.
+    delete data['record_id'];
+    // -------------------------------------------------------------------------
+
     return new Promise((resolve, reject) => {
       request(requestParams, (error, response, body) => {
         response = scrubResponse(response);
