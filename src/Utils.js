@@ -28,6 +28,7 @@ export function assembleError({ response, error, params }) {
     if ((customCodes || [200, 201, 202, 204]).indexOf(response.statusCode) > -1)
       return false;
   }
+
   if (error) return error;
 
   return new Error(
