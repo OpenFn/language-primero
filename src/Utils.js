@@ -16,15 +16,23 @@ export function setAuth(configuration, manualAuth) {
   else return null;
 }
 
+export function scrubResponse(response) {
+  response.request.headers.Authorization = '--REDACTED--';
+
+  return response;
+}
+
 export function assembleError({ response, error, params }) {
   if (response) {
     const customCodes = params.options && params.options.successCodes;
     if ((customCodes || [200, 201, 202, 204]).indexOf(response.statusCode) > -1)
       return false;
   }
+
   if (error) return error;
+
   return new Error(
-    `Server responded with:  \n${JSON.stringify(response, null, 2)}`
+    `Server responded with:\n${JSON.stringify(response, null, 2)}`
   );
 }
 
