@@ -10,7 +10,7 @@ An OpenFn **_adaptor_** for building integration jobs for use with UNICEF's Prim
 
 ### Adaptor for Primero v2.0
 
-This documentation outlines the functions available for Primero `v2.0` in the main branch. The API documentation is available at: https://github.com/primeroIMS/primero/blob/development_v2/README.md
+This documentation outlines the functions available for Primero `v2.0` in the main branch. The API documentation is available at: https://github.com/primeroIMS/primero/tree/development_v2/app/controllers/api
 
 ### Adaptor for Primero v1.0 still available on the `v1` branch.
 
