@@ -41,67 +41,73 @@ exports.createReferrals = createReferrals;
 Object.defineProperty(exports, "alterState", {
   enumerable: true,
   get: function get() {
-    return _languageCommon2.alterState;
+    return _languageCommon.alterState;
+  }
+});
+Object.defineProperty(exports, "fn", {
+  enumerable: true,
+  get: function get() {
+    return _languageCommon.fn;
   }
 });
 Object.defineProperty(exports, "combine", {
   enumerable: true,
   get: function get() {
-    return _languageCommon2.combine;
+    return _languageCommon.combine;
   }
 });
 Object.defineProperty(exports, "dataPath", {
   enumerable: true,
   get: function get() {
-    return _languageCommon2.dataPath;
+    return _languageCommon.dataPath;
   }
 });
 Object.defineProperty(exports, "dataValue", {
   enumerable: true,
   get: function get() {
-    return _languageCommon2.dataValue;
+    return _languageCommon.dataValue;
   }
 });
 Object.defineProperty(exports, "each", {
   enumerable: true,
   get: function get() {
-    return _languageCommon2.each;
+    return _languageCommon.each;
   }
 });
 Object.defineProperty(exports, "field", {
   enumerable: true,
   get: function get() {
-    return _languageCommon2.field;
+    return _languageCommon.field;
   }
 });
 Object.defineProperty(exports, "fields", {
   enumerable: true,
   get: function get() {
-    return _languageCommon2.fields;
+    return _languageCommon.fields;
   }
 });
 Object.defineProperty(exports, "http", {
   enumerable: true,
   get: function get() {
-    return _languageCommon2.http;
+    return _languageCommon.http;
   }
 });
 Object.defineProperty(exports, "lastReferenceValue", {
   enumerable: true,
   get: function get() {
-    return _languageCommon2.lastReferenceValue;
+    return _languageCommon.lastReferenceValue;
   }
 });
 Object.defineProperty(exports, "merge", {
   enumerable: true,
   get: function get() {
-    return _languageCommon2.merge;
+    return _languageCommon.merge;
   }
 });
 Object.defineProperty(exports, "sourceValue", {
   enumerable: true,
   get: function get() {
-    return _languageCommon2.sourceValue;
+    return _languageCommon.sourceValue;
   }
 });
 
@@ -111,11 +117,9 @@ var _Utils = require("./Utils");
 
 var _request = _interopRequireDefault(require("request"));
 
-var _languageCommon2 = require("openfn/language-common");
-
 function _interopRequireDefault(obj) { return obj &amp;&amp; obj.__esModule ? obj : { "default": obj }; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i &lt; arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
@@ -163,11 +167,43 @@ function generateAuthString(state) {
   if (configuration.basicAuth) {
     var user = configuration.user,
         password = configuration.password;
-    return 'Basic ' + Buffer("".concat(user, ":").concat(password)).toString('base64');
+    return 'Basic ' + Buffer.from("".concat(user, ":").concat(password)).toString('base64');
   }
 
   var token = auth.token;
   return "Bearer ".concat(token);
+}
+/**
+ * Execute custom query
+ * @param {State} state
+ * @param {object} params
+ * @param {function} callback
+ * @returns {State}
+ */
+
+
+function queryHandler(state, params, callback) {
+  return new Promise(function (resolve, reject) {
+    (0, _request["default"])(params, function (error, response, body) {
+      response = (0, _Utils.scrubResponse)(response);
+      error = (0, _Utils.assembleError)({
+        error: error,
+        response: response,
+        params: params
+      });
+
+      if (error) {
+        reject(error);
+      } else {
+        console.log("Primero says: '".concat(response.statusCode, " ").concat(response.statusMessage, "'"));
+        var resp = (0, _Utils.tryJson)(body);
+        console.log("".concat(resp.data.length, " referrals retrieved from request: ").concat(JSON.stringify(response.request, null, 2), "."));
+        var nextState = (0, _languageCommon.composeNextState)(state, resp.data);
+        if (callback) resolve(callback(nextState));
+        resolve(nextState);
+      }
+    });
+  });
 }
 /**
  * Logs in to Primero.
@@ -200,6 +236,7 @@ function login(state) {
   };
   return new Promise(function (resolve, reject) {
     (0, _request["default"])(params, function (error, response, body) {
+      response = (0, _Utils.scrubResponse)(response);
       error = (0, _Utils.assembleError)({
         error: error,
         response: response,
@@ -254,12 +291,14 @@ function getCases(query, callback) {
       method: 'GET',
       url: "".concat(url, "/api/v2/cases"),
       headers: {
-        Authorization: generateAuthString(state)
+        Authorization: generateAuthString(state),
+        'Content-Type': 'application/json'
       },
       qs: query
     };
     return new Promise(function (resolve, reject) {
       (0, _request["default"])(params, function (error, response, body) {
+        response = (0, _Utils.scrubResponse)(response);
         error = (0, _Utils.assembleError)({
           error: error,
           response: response,
@@ -313,6 +352,7 @@ function createCase(params, callback) {
       url: "".concat(url, "/api/v2/cases"),
       headers: {
         Authorization: generateAuthString(state),
+        'Content-Type': 'application/json',
         options: {
           successCodes: [200, 201, 202, 203, 204]
         }
@@ -323,6 +363,7 @@ function createCase(params, callback) {
     };
     return new Promise(function (resolve, reject) {
       (0, _request["default"])(requestParams, function (error, response, body) {
+        response = (0, _Utils.scrubResponse)(response);
         error = (0, _Utils.assembleError)({
           error: error,
           response: response,
@@ -332,9 +373,11 @@ function createCase(params, callback) {
         if (error) {
           reject(error);
         } else {
+          var _resp$body;
+
           var resp = (0, _Utils.tryJson)(body);
           console.log("Post succeeded: ".concat(response.statusCode, " ").concat(response.statusMessage));
-          var nextState = (0, _languageCommon.composeNextState)(state, resp.data.body);
+          var nextState = (0, _languageCommon.composeNextState)(state, (_resp$body = resp.body) === null || _resp$body === void 0 ? void 0 : _resp$body.data);
           if (callback) resolve(callback(nextState));
           resolve(nextState);
         }
@@ -373,7 +416,8 @@ function updateCase(id, params, callback) {
       method: 'PATCH',
       url: "".concat(url, "/api/v2/cases/").concat(id),
       headers: {
-        Authorization: generateAuthString(state)
+        Authorization: generateAuthString(state),
+        'Content-Type': 'application/json'
       },
       json: {
         data: data
@@ -381,6 +425,7 @@ function updateCase(id, params, callback) {
     };
     return new Promise(function (resolve, reject) {
       (0, _request["default"])(requestParams, function (error, response, body) {
+        response = (0, _Utils.scrubResponse)(response);
         error = (0, _Utils.assembleError)({
           error: error,
           response: response,
@@ -390,8 +435,10 @@ function updateCase(id, params, callback) {
         if (error) {
           reject(error);
         } else {
+          var _resp$body2;
+
           var resp = (0, _Utils.tryJson)(body);
-          var nextState = (0, _languageCommon.composeNextState)(state, resp.body.data);
+          var nextState = (0, _languageCommon.composeNextState)(state, (_resp$body2 = resp.body) === null || _resp$body2 === void 0 ? void 0 : _resp$body2.data);
           if (callback) resolve(callback(nextState));
           resolve(nextState);
         }
@@ -441,13 +488,18 @@ function upsertCase(params, callback) {
       method: 'GET',
       url: "".concat(url, "/api/v2/cases"),
       headers: {
-        Authorization: generateAuthString(state)
+        Authorization: generateAuthString(state),
+        'Content-Type': 'application/json'
       },
       qs: qs
-    };
-    console.log("Upserting: ".concat(JSON.stringify(requestParams, null, 2)));
+    }; // NOTE: while record_id is used in the GET, it must be dropped before -----
+    // subsequent create or update calls are made as it's not valid in Primero.
+
+    delete _data['record_id']; // -------------------------------------------------------------------------
+
     return new Promise(function (resolve, reject) {
       (0, _request["default"])(requestParams, function (error, response, body) {
+        response = (0, _Utils.scrubResponse)(response);
         error = (0, _Utils.assembleError)({
           error: error,
           response: response,
@@ -511,43 +563,89 @@ function upsertCase(params, callback) {
  * Get referrals for a specific case in Primero
  * @public
  * @example
- * getReferrals("7ed1d49f-14c7-4181-8d83-dc8ed1699f08", callback)
+ * getReferrals(
+ *  { externalId: "record_id" },
+ *  "7ed1d49f-14c7-4181-8d83-dc8ed1699f08",
+ *  callback)
  * @function
- * @param {string} recordId - an ID to use for fetching referrals.
+ * @param {object} params - an object with an externalId value to use.
+ * @param {string} id - an ID to use for fetching referrals.
  * @param {function} callback - (Optional) Callback function
  * @returns {Operation}
  */
 
 
-function getReferrals(recordId, callback) {
+function getReferrals(params, id, callback) {
   return function (state) {
     var url = state.configuration.url;
-    var params = {
-      method: 'GET',
-      url: "".concat(url, "/api/v2/cases/").concat(recordId, "/referrals"),
-      headers: {
-        Authorization: generateAuthString(state)
-      }
-    };
-    return new Promise(function (resolve, reject) {
-      (0, _request["default"])(params, function (error, response, body) {
-        error = (0, _Utils.assembleError)({
-          error: error,
-          response: response,
-          params: params
-        });
 
-        if (error) {
-          reject(error);
-        } else {
-          console.log("Primero says: '".concat(response.statusCode, " ").concat(response.statusMessage, "'"));
-          var resp = (0, _Utils.tryJson)(body);
-          console.log("".concat(resp.data.length, " referrals retrieved from request: ").concat(JSON.stringify(response.request, null, 2), "."));
-          var nextState = (0, _languageCommon.composeNextState)(state, resp.data);
-          if (callback) resolve(callback(nextState));
-          resolve(nextState);
-        }
-      });
+    var _expandReferences4 = (0, _languageCommon.expandReferences)(params)(state),
+        externalId = _expandReferences4.externalId;
+
+    var requestParams = {};
+    return new Promise(function (resolve, reject) {
+      if (externalId === 'record_id') {
+        console.log('Fetching by record id...');
+        requestParams = {
+          method: 'GET',
+          url: "".concat(url, "/api/v2/cases/").concat(id, "/referrals"),
+          headers: {
+            Authorization: generateAuthString(state),
+            'Content-Type': 'application/json'
+          }
+        };
+        resolve(queryHandler(state, requestParams, callback));
+      } else {
+        console.log('Fetching by case id...');
+        var qs = {
+          case_id: "".concat(id)
+        };
+        requestParams = {
+          method: 'GET',
+          url: "".concat(url, "/api/v2/cases"),
+          headers: {
+            Authorization: generateAuthString(state),
+            'Content-Type': 'application/json'
+          },
+          qs: qs
+        };
+        return new Promise(function (resolve, reject) {
+          (0, _request["default"])(requestParams, function (error, response, body) {
+            response = (0, _Utils.scrubResponse)(response);
+            error = (0, _Utils.assembleError)({
+              error: error,
+              response: response,
+              params: {}
+            });
+
+            if (error) {
+              reject(error);
+            } else {
+              var resp = (0, _Utils.tryJson)(body);
+
+              if (resp.data.length == 0) {
+                console.log('No case found.');
+                resolve(state);
+                return state;
+              } else if (resp.data.length === 1) {
+                console.log('Case found. Fetching referrals.');
+                var _id = resp.data[0].id;
+                requestParams = {
+                  method: 'GET',
+                  url: "".concat(url, "/api/v2/cases/").concat(_id, "/referrals"),
+                  headers: {
+                    Authorization: generateAuthString(state),
+                    'Content-Type': 'application/json'
+                  }
+                };
+                resolve(queryHandler(state, requestParams, callback));
+              } else {
+                reject('Multiple cases found. Try using another externalId and ensure that it is unique.');
+              }
+            }
+          });
+        });
+      }
     });
   };
 }
@@ -572,14 +670,15 @@ function createReferrals(params, callback) {
   return function (state) {
     var url = state.configuration.url;
 
-    var _expandReferences4 = (0, _languageCommon.expandReferences)(params)(state),
-        data = _expandReferences4.data;
+    var _expandReferences5 = (0, _languageCommon.expandReferences)(params)(state),
+        data = _expandReferences5.data;
 
     var requestParams = {
       method: 'POST',
       url: "".concat(url, "/api/v2/cases/referrals"),
       headers: {
         Authorization: generateAuthString(state),
+        'Content-Type': 'application/json',
         options: {
           successCodes: [200, 201, 202, 203, 204]
         }
@@ -590,6 +689,7 @@ function createReferrals(params, callback) {
     };
     return new Promise(function (resolve, reject) {
       (0, _request["default"])(requestParams, function (error, response, body) {
+        response = (0, _Utils.scrubResponse)(response);
         error = (0, _Utils.assembleError)({
           error: error,
           response: response,
@@ -608,8 +708,7 @@ function createReferrals(params, callback) {
       });
     });
   };
-}
-</code></pre>
+}</code></pre>
         </article>
     </section>
 
@@ -619,13 +718,13 @@ function createReferrals(params, callback) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#cleanupState">cleanupState</a></li><li><a href="global.html#createCase">createCase</a></li><li><a href="global.html#createReferrals">createReferrals</a></li><li><a href="global.html#execute">execute</a></li><li><a href="global.html#generateAuthString">generateAuthString</a></li><li><a href="global.html#getCases">getCases</a></li><li><a href="global.html#getReferrals">getReferrals</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#updateCase">updateCase</a></li><li><a href="global.html#upsertCase">upsertCase</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#cleanupState">cleanupState</a></li><li><a href="global.html#createCase">createCase</a></li><li><a href="global.html#createReferrals">createReferrals</a></li><li><a href="global.html#execute">execute</a></li><li><a href="global.html#generateAuthString">generateAuthString</a></li><li><a href="global.html#getCases">getCases</a></li><li><a href="global.html#getReferrals">getReferrals</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#queryHandler">queryHandler</a></li><li><a href="global.html#updateCase">updateCase</a></li><li><a href="global.html#upsertCase">upsertCase</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 03 2021 13:25:59 GMT+0000 (Greenwich Mean Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Sep 28 2021 16:56:15 GMT+0000 (Greenwich Mean Time)
 </footer>
 
 <script> prettyPrint(); </script>
