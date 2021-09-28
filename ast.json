@@ -225,7 +225,8 @@
     {
       "name": "getReferrals",
       "params": [
-        "recordId",
+        "params",
+        "id",
         "callback"
       ],
       "docs": {
@@ -238,7 +239,7 @@
           },
           {
             "title": "example",
-            "description": "getReferrals(\"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\", callback)"
+            "description": "getReferrals(\n { externalId: \"record_id\" },\n \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\",\n callback)"
           },
           {
             "title": "function",
@@ -247,12 +248,21 @@
           },
           {
             "title": "param",
+            "description": "an object with an externalId value to use.",
+            "type": {
+              "type": "NameExpression",
+              "name": "object"
+            },
+            "name": "params"
+          },
+          {
+            "title": "param",
             "description": "an ID to use for fetching referrals.",
             "type": {
               "type": "NameExpression",
               "name": "string"
             },
-            "name": "recordId"
+            "name": "id"
           },
           {
             "title": "param",
