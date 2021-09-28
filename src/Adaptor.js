@@ -71,16 +71,20 @@ function queryHandler(state, params, callback) {
           `Primero says: '${response.statusCode} ${response.statusMessage}'`
         );
         const resp = tryJson(body);
-        console.log(
-          `${
-            resp.data.length
-          } referrals retrieved from request: ${JSON.stringify(
-            response.request,
-            null,
-            2
-          )}.`
-        );
-        const nextState = composeNextState(state, resp.data);
+        if (params.method === 'GET') {
+          console.log(
+            `${
+              resp.data.length
+            } referrals retrieved from request: ${JSON.stringify(
+              response.request,
+              null,
+              2
+            )}.`
+          );
+        } else if (params.method === 'PATCH') {
+          console.log('Referral updated.');
+        }
+        const nextState = composeNextState(state, resp.data || resp);
         if (callback) resolve(callback(nextState));
         resolve(nextState);
       }
