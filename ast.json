@@ -226,7 +226,6 @@
       "name": "getReferrals",
       "params": [
         "params",
-        "id",
         "callback"
       ],
       "docs": {
@@ -239,7 +238,7 @@
           },
           {
             "title": "example",
-            "description": "getReferrals(\n { externalId: \"record_id\" },\n \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\",\n callback)"
+            "description": "getReferrals(\n {\n   externalId: \"record_id\",\n   id: \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\"\n }, callback)"
           },
           {
             "title": "function",
@@ -248,21 +247,12 @@
           },
           {
             "title": "param",
-            "description": "an object with an externalId value to use.",
+            "description": "an object with an externalId value to use and the id.",
             "type": {
               "type": "NameExpression",
               "name": "object"
             },
             "name": "params"
-          },
-          {
-            "title": "param",
-            "description": "an ID to use for fetching referrals.",
-            "type": {
-              "type": "NameExpression",
-              "name": "string"
-            },
-            "name": "id"
           },
           {
             "title": "param",
@@ -311,6 +301,59 @@
           {
             "title": "param",
             "description": "an object with some case data.",
+            "type": {
+              "type": "NameExpression",
+              "name": "object"
+            },
+            "name": "params"
+          },
+          {
+            "title": "param",
+            "description": "(Optional) Callback function",
+            "type": {
+              "type": "NameExpression",
+              "name": "function"
+            },
+            "name": "callback"
+          },
+          {
+            "title": "returns",
+            "description": null,
+            "type": {
+              "type": "NameExpression",
+              "name": "Operation"
+            }
+          }
+        ]
+      },
+      "valid": true
+    },
+    {
+      "name": "updateReferrals",
+      "params": [
+        "params",
+        "callback"
+      ],
+      "docs": {
+        "description": "Update referrals for a specific case in Primero",
+        "tags": [
+          {
+            "title": "public",
+            "description": null,
+            "type": null
+          },
+          {
+            "title": "example",
+            "description": "updateReferrals(\n {\n   externalId: \"record_id\",\n   id: \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\"\n   referral_id: \"37612f65-3bda-48eb-b526-d31383f94166\",\n   data: state => state.data\n },\n callback)"
+          },
+          {
+            "title": "function",
+            "description": null,
+            "name": null
+          },
+          {
+            "title": "param",
+            "description": "an object with an externalId value to use, the id and the referral id to update.",
             "type": {
               "type": "NameExpression",
               "name": "object"

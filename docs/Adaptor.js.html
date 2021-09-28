@@ -38,6 +38,7 @@ exports.updateCase = updateCase;
 exports.upsertCase = upsertCase;
 exports.getReferrals = getReferrals;
 exports.createReferrals = createReferrals;
+exports.updateReferrals = updateReferrals;
 Object.defineProperty(exports, "alterState", {
   enumerable: true,
   get: function get() {
@@ -197,8 +198,14 @@ function queryHandler(state, params, callback) {
       } else {
         console.log("Primero says: '".concat(response.statusCode, " ").concat(response.statusMessage, "'"));
         var resp = (0, _Utils.tryJson)(body);
-        console.log("".concat(resp.data.length, " referrals retrieved from request: ").concat(JSON.stringify(response.request, null, 2), "."));
-        var nextState = (0, _languageCommon.composeNextState)(state, resp.data);
+
+        if (params.method === 'GET') {
+          console.log("".concat(resp.data.length, " referrals retrieved from request: ").concat(JSON.stringify(response.request, null, 2), "."));
+        } else if (params.method === 'PATCH') {
+          console.log('Referral updated.');
+        }
+
+        var nextState = (0, _languageCommon.composeNextState)(state, resp.data || resp);
         if (callback) resolve(callback(nextState));
         resolve(nextState);
       }
@@ -564,23 +571,24 @@ function upsertCase(params, callback) {
  * @public
  * @example
  * getReferrals(
- *  { externalId: "record_id" },
- *  "7ed1d49f-14c7-4181-8d83-dc8ed1699f08",
- *  callback)
+ *  {
+ *    externalId: "record_id",
+ *    id: "7ed1d49f-14c7-4181-8d83-dc8ed1699f08"
+ *  }, callback)
  * @function
- * @param {object} params - an object with an externalId value to use.
- * @param {string} id - an ID to use for fetching referrals.
+ * @param {object} params - an object with an externalId value to use and the id.
  * @param {function} callback - (Optional) Callback function
  * @returns {Operation}
  */
 
 
-function getReferrals(params, id, callback) {
+function getReferrals(params, callback) {
   return function (state) {
     var url = state.configuration.url;
 
     var _expandReferences4 = (0, _languageCommon.expandReferences)(params)(state),
-        externalId = _expandReferences4.externalId;
+        externalId = _expandReferences4.externalId,
+        id = _expandReferences4.id;
 
     var requestParams = {};
     return new Promise(function (resolve, reject) {
@@ -708,6 +716,108 @@ function createReferrals(params, callback) {
       });
     });
   };
+}
+/**
+ * Update referrals for a specific case in Primero
+ * @public
+ * @example
+ * updateReferrals(
+ *  {
+ *    externalId: "record_id",
+ *    id: "7ed1d49f-14c7-4181-8d83-dc8ed1699f08"
+ *    referral_id: "37612f65-3bda-48eb-b526-d31383f94166",
+ *    data: state => state.data
+ *  },
+ *  callback)
+ * @function
+ * @param {object} params - an object with an externalId value to use, the id and the referral id to update.
+ * @param {function} callback - (Optional) Callback function
+ * @returns {Operation}
+ */
+
+
+function updateReferrals(params, callback) {
+  return function (state) {
+    var url = state.configuration.url;
+
+    var _expandReferences6 = (0, _languageCommon.expandReferences)(params)(state),
+        externalId = _expandReferences6.externalId,
+        id = _expandReferences6.id,
+        referral_id = _expandReferences6.referral_id,
+        data = _expandReferences6.data;
+
+    var requestParams = {};
+    return new Promise(function (resolve, reject) {
+      if (externalId === 'record_id') {
+        console.log('Updating by record id...');
+        requestParams = {
+          method: 'PATCH',
+          url: "".concat(url, "/api/v2/cases/").concat(id, "/referrals/").concat(referral_id),
+          headers: {
+            Authorization: generateAuthString(state),
+            'Content-Type': 'application/json'
+          },
+          json: {
+            data: data
+          }
+        };
+        resolve(queryHandler(state, requestParams, callback));
+      } else {
+        console.log('Updating by case id...');
+        var qs = {
+          case_id: "".concat(id)
+        };
+        requestParams = {
+          method: 'GET',
+          url: "".concat(url, "/api/v2/cases"),
+          headers: {
+            Authorization: generateAuthString(state),
+            'Content-Type': 'application/json'
+          },
+          qs: qs
+        };
+        return new Promise(function (resolve, reject) {
+          (0, _request["default"])(requestParams, function (error, response, body) {
+            response = (0, _Utils.scrubResponse)(response);
+            error = (0, _Utils.assembleError)({
+              error: error,
+              response: response,
+              params: {}
+            });
+
+            if (error) {
+              reject(error);
+            } else {
+              var resp = (0, _Utils.tryJson)(body);
+
+              if (resp.data.length == 0) {
+                console.log('No case found.');
+                resolve(state);
+                return state;
+              } else if (resp.data.length === 1) {
+                console.log('Case found. Fetching referrals.');
+                var _id2 = resp.data[0].id;
+                requestParams = {
+                  method: 'PATCH',
+                  url: "".concat(url, "/api/v2/cases/").concat(_id2, "/referrals/").concat(referral_id),
+                  headers: {
+                    Authorization: generateAuthString(state),
+                    'Content-Type': 'application/json'
+                  },
+                  json: {
+                    data: data
+                  }
+                };
+                resolve(queryHandler(state, requestParams, callback));
+              } else {
+                reject('Multiple cases found. Try using another externalId and ensure that it is unique.');
+              }
+            }
+          });
+        });
+      }
+    });
+  };
 }</code></pre>
         </article>
     </section>
@@ -718,13 +828,13 @@ function createReferrals(params, callback) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#cleanupState">cleanupState</a></li><li><a href="global.html#createCase">createCase</a></li><li><a href="global.html#createReferrals">createReferrals</a></li><li><a href="global.html#execute">execute</a></li><li><a href="global.html#generateAuthString">generateAuthString</a></li><li><a href="global.html#getCases">getCases</a></li><li><a href="global.html#getReferrals">getReferrals</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#queryHandler">queryHandler</a></li><li><a href="global.html#updateCase">updateCase</a></li><li><a href="global.html#upsertCase">upsertCase</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#cleanupState">cleanupState</a></li><li><a href="global.html#createCase">createCase</a></li><li><a href="global.html#createReferrals">createReferrals</a></li><li><a href="global.html#execute">execute</a></li><li><a href="global.html#generateAuthString">generateAuthString</a></li><li><a href="global.html#getCases">getCases</a></li><li><a href="global.html#getReferrals">getReferrals</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#queryHandler">queryHandler</a></li><li><a href="global.html#updateCase">updateCase</a></li><li><a href="global.html#updateReferrals">updateReferrals</a></li><li><a href="global.html#upsertCase">upsertCase</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Sep 28 2021 16:56:15 GMT+0000 (Greenwich Mean Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Sep 28 2021 18:29:16 GMT+0000 (Greenwich Mean Time)
 </footer>
 
 <script> prettyPrint(); </script>
