@@ -424,16 +424,16 @@ export function upsertCase(params, callback) {
  * @public
  * @example
  * getReferrals(
- *  { externalId: "record_id" },
- *  "7ed1d49f-14c7-4181-8d83-dc8ed1699f08",
- *  callback)
+ *  {
+ *    externalId: "record_id",
+ *    id: "7ed1d49f-14c7-4181-8d83-dc8ed1699f08"
+ *  }, callback)
  * @function
- * @param {object} params - an object with an externalId value to use.
- * @param {string} id - an ID to use for fetching referrals.
+ * @param {object} params - an object with an externalId value to use and the id.
  * @param {function} callback - (Optional) Callback function
  * @returns {Operation}
  */
-export function getReferrals(params, id, callback) {
+export function getReferrals(params, callback) {
   return state => {
     const { url } = state.configuration;
 
