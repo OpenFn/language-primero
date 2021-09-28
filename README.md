@@ -186,6 +186,30 @@ createReferrals(
 );
 ```
 
+### Update referrals for a case in Primero
+
+Use this function to update one referral using the referral_id. The update is made using either the `record id` or `case id`.
+
+```js
+updateReferrals(
+  {
+    externalId: 'case_id',
+    id: '2a2cc932-4b6f-43a6-928d-40fc9949eb02',
+    referral_id: 'c377bcb2-122d-46ee-a861-869e1b6476cd',
+    data: {
+      status: 'accepted',
+      id: '4c58d02f-3182-4006-b2fe-96aa797f5ee7',
+      type: 'Referral',
+      record_type: 'case',
+    },
+  },
+  state => {
+    console.log(state.data);
+    return state;
+  }
+);
+```
+
 ## Development
 
 Clone the repo, run `npm install`.

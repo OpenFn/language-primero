@@ -558,6 +558,100 @@ export function createReferrals(params, callback) {
   };
 }
 
+/**
+ * Update referrals for a specific case in Primero
+ * @public
+ * @example
+ * updateReferrals(
+ *  {
+ *    externalId: "record_id",
+ *    id: "7ed1d49f-14c7-4181-8d83-dc8ed1699f08"
+ *    referral_id: "37612f65-3bda-48eb-b526-d31383f94166",
+ *    data: state => state.data
+ *  },
+ *  callback)
+ * @function
+ * @param {object} params - an object with an externalId value to use, the id and the referral id to update.
+ * @param {function} callback - (Optional) Callback function
+ * @returns {Operation}
+ */
+export function updateReferrals(params, callback) {
+  return state => {
+    const { url } = state.configuration;
+
+    const { externalId, id, referral_id, data } = expandReferences(params)(
+      state
+    );
+
+    let requestParams = {};
+
+    return new Promise((resolve, reject) => {
+      if (externalId === 'record_id') {
+        console.log('Updating by record id...');
+        requestParams = {
+          method: 'PATCH',
+          url: `${url}/api/v2/cases/${id}/referrals/${referral_id}`,
+          headers: {
+            Authorization: generateAuthString(state),
+            'Content-Type': 'application/json',
+          },
+          json: { data: data },
+        };
+        resolve(queryHandler(state, requestParams, callback));
+      } else {
+        console.log('Updating by case id...');
+        const qs = {
+          case_id: `${id}`,
+        };
+        requestParams = {
+          method: 'GET',
+          url: `${url}/api/v2/cases`,
+          headers: {
+            Authorization: generateAuthString(state),
+            'Content-Type': 'application/json',
+          },
+          qs,
+        };
+        return new Promise((resolve, reject) => {
+          request(requestParams, (error, response, body) => {
+            response = scrubResponse(response);
+            error = assembleError({ error, response, params: {} });
+            if (error) {
+              reject(error);
+            } else {
+              const resp = tryJson(body);
+              if (resp.data.length == 0) {
+                console.log('No case found.');
+                resolve(state);
+                return state;
+              } else if (resp.data.length === 1) {
+                console.log('Case found. Fetching referrals.');
+
+                const id = resp.data[0].id;
+                requestParams = {
+                  method: 'PATCH',
+                  url: `${url}/api/v2/cases/${id}/referrals/${referral_id}`,
+
+                  headers: {
+                    Authorization: generateAuthString(state),
+                    'Content-Type': 'application/json',
+                  },
+                  json: { data: data },
+                };
+                resolve(queryHandler(state, requestParams, callback));
+              } else {
+                reject(
+                  'Multiple cases found. Try using another externalId and ensure that it is unique.'
+                );
+              }
+            }
+          });
+        });
+      }
+    });
+  };
+}
+
 export {
   alterState,
   fn,

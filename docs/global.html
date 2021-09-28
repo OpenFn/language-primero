@@ -205,7 +205,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line239">line 239</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line246">line 246</a>
     </li></ul></dd>
     
 
@@ -388,7 +388,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line315">line 315</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line322">line 322</a>
     </li></ul></dd>
     
 
@@ -580,7 +580,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line641">line 641</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line649">line 649</a>
     </li></ul></dd>
     
 
@@ -746,7 +746,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line112">line 112</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line113">line 113</a>
     </li></ul></dd>
     
 
@@ -909,7 +909,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line135">line 135</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line136">line 136</a>
     </li></ul></dd>
     
 
@@ -1092,7 +1092,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line259">line 259</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line266">line 266</a>
     </li></ul></dd>
     
 
@@ -1155,7 +1155,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
 
     
-    <h4 class="name" id="getReferrals"><span class="type-signature"></span>getReferrals<span class="signature">(params, id, callback)</span><span class="type-signature"> &rarr; {Operation}</span></h4>
+    <h4 class="name" id="getReferrals"><span class="type-signature"></span>getReferrals<span class="signature">(params, callback)</span><span class="type-signature"> &rarr; {Operation}</span></h4>
     
 
     
@@ -1215,30 +1215,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
 
             
 
-            <td class="description last">an object with an externalId value to use.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">an ID to use for fetching referrals.</td>
+            <td class="description last">an object with an externalId value to use and the id.</td>
         </tr>
 
     
@@ -1302,7 +1279,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line550">line 550</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line557">line 557</a>
     </li></ul></dd>
     
 
@@ -1352,9 +1329,10 @@ Wraps `language-common/execute`, and prepends initial state for http.
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>getReferrals(
- { externalId: "record_id" },
- "7ed1d49f-14c7-4181-8d83-dc8ed1699f08",
- callback)</code></pre>
+ {
+   externalId: "record_id",
+   id: "7ed1d49f-14c7-4181-8d83-dc8ed1699f08"
+ }, callback)</code></pre>
 
 
 
@@ -1465,7 +1443,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line190">line 190</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line197">line 197</a>
     </li></ul></dd>
     
 
@@ -1671,7 +1649,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line157">line 157</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line158">line 158</a>
     </li></ul></dd>
     
 
@@ -1872,7 +1850,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line380">line 380</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line387">line 387</a>
     </li></ul></dd>
     
 
@@ -1929,6 +1907,196 @@ Wraps `language-common/execute`, and prepends initial state for http.
     "status": "open",
     "case_id": "6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz",
   }}, callback)</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="updateReferrals"><span class="type-signature"></span>updateReferrals<span class="signature">(params, callback)</span><span class="type-signature"> &rarr; {Operation}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Update referrals for a specific case in Primero
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">an object with an externalId value to use, the id and the referral id to update.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">(Optional) Callback function</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line711">line 711</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Operation</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>updateReferrals(
+ {
+   externalId: "record_id",
+   id: "7ed1d49f-14c7-4181-8d83-dc8ed1699f08"
+   referral_id: "37612f65-3bda-48eb-b526-d31383f94166",
+   data: state => state.data
+ },
+ callback)</code></pre>
 
 
 
@@ -2062,7 +2230,7 @@ Wraps `language-common/execute`, and prepends initial state for http.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line441">line 441</a>
+        <a href="Adaptor.js.html">Adaptor.js</a>, <a href="Adaptor.js.html#line448">line 448</a>
     </li></ul></dd>
     
 
@@ -2139,13 +2307,13 @@ Wraps `language-common/execute`, and prepends initial state for http.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#cleanupState">cleanupState</a></li><li><a href="global.html#createCase">createCase</a></li><li><a href="global.html#createReferrals">createReferrals</a></li><li><a href="global.html#execute">execute</a></li><li><a href="global.html#generateAuthString">generateAuthString</a></li><li><a href="global.html#getCases">getCases</a></li><li><a href="global.html#getReferrals">getReferrals</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#queryHandler">queryHandler</a></li><li><a href="global.html#updateCase">updateCase</a></li><li><a href="global.html#upsertCase">upsertCase</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#cleanupState">cleanupState</a></li><li><a href="global.html#createCase">createCase</a></li><li><a href="global.html#createReferrals">createReferrals</a></li><li><a href="global.html#execute">execute</a></li><li><a href="global.html#generateAuthString">generateAuthString</a></li><li><a href="global.html#getCases">getCases</a></li><li><a href="global.html#getReferrals">getReferrals</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#queryHandler">queryHandler</a></li><li><a href="global.html#updateCase">updateCase</a></li><li><a href="global.html#updateReferrals">updateReferrals</a></li><li><a href="global.html#upsertCase">upsertCase</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Sep 28 2021 16:56:15 GMT+0000 (Greenwich Mean Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Sep 28 2021 18:29:16 GMT+0000 (Greenwich Mean Time)
 </footer>
 
 <script> prettyPrint(); </script>
