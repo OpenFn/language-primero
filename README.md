@@ -153,13 +153,17 @@ upsertCase(
 
 ### Get referrals for a case in Primero
 
-Use this function to get the list of referrals of one case from Primero
+Use this function to get the list of referrals of one case from Primero. The search can be done using either `record id` or `case id`.
 
 ```js
-getReferrals('7ed1d49f-14c7-4181-8d83-dc8ed1699f08', state => {
-  console.log('Here is the callback.');
-  return state;
-});
+getReferrals(
+  { externalId: 'case_id' },
+  'a59e880e-d58f-4b68-ba6e-e0616a49aefd',
+  state => {
+    console.log(state.data);
+    return state;
+  }
+);
 ```
 
 ### Create referrals for one or multiple cases in Primero
