@@ -53,6 +53,42 @@ function generateAuthString(state) {
 }
 
 /**
+ * Execute custom query
+ * @param {State} state
+ * @param {object} params
+ * @param {function} callback
+ * @returns {State}
+ */
+function queryHandler(state, params, callback) {
+  return new Promise((resolve, reject) => {
+    request(params, function (error, response, body) {
+      response = scrubResponse(response);
+      error = assembleError({ error, response, params });
+      if (error) {
+        reject(error);
+      } else {
+        console.log(
+          `Primero says: '${response.statusCode} ${response.statusMessage}'`
+        );
+        const resp = tryJson(body);
+        console.log(
+          `${
+            resp.data.length
+          } referrals retrieved from request: ${JSON.stringify(
+            response.request,
+            null,
+            2
+          )}.`
+        );
+        const nextState = composeNextState(state, resp.data);
+        if (callback) resolve(callback(nextState));
+        resolve(nextState);
+      }
+    });
+  });
+}
+
+/**
  * Logs in to Primero.
  * @example
  * login(state)
@@ -383,50 +419,83 @@ export function upsertCase(params, callback) {
  * Get referrals for a specific case in Primero
  * @public
  * @example
- * getReferrals("7ed1d49f-14c7-4181-8d83-dc8ed1699f08", callback)
+ * getReferrals(
+ *  { externalId: "record_id" },
+ *  "7ed1d49f-14c7-4181-8d83-dc8ed1699f08",
+ *  callback)
  * @function
- * @param {string} recordId - an ID to use for fetching referrals.
+ * @param {object} params - an object with an externalId value to use.
+ * @param {string} id - an ID to use for fetching referrals.
  * @param {function} callback - (Optional) Callback function
  * @returns {Operation}
  */
-export function getReferrals(recordId, callback) {
+export function getReferrals(params, id, callback) {
   return state => {
     const { url } = state.configuration;
 
-    const params = {
-      method: 'GET',
-      url: `${url}/api/v2/cases/${recordId}/referrals`,
-      headers: {
-        Authorization: generateAuthString(state),
-        'Content-Type': 'application/json',
-      },
-    };
+    const { externalId } = expandReferences(params)(state);
+
+    let requestParams = {};
 
     return new Promise((resolve, reject) => {
-      request(params, function (error, response, body) {
-        response = scrubResponse(response);
-        error = assembleError({ error, response, params });
-        if (error) {
-          reject(error);
-        } else {
-          console.log(
-            `Primero says: '${response.statusCode} ${response.statusMessage}'`
-          );
-          const resp = tryJson(body);
-          console.log(
-            `${
-              resp.data.length
-            } referrals retrieved from request: ${JSON.stringify(
-              response.request,
-              null,
-              2
-            )}.`
-          );
-          const nextState = composeNextState(state, resp.data);
-          if (callback) resolve(callback(nextState));
-          resolve(nextState);
-        }
-      });
+      if (externalId === 'record_id') {
+        console.log('Fetching by record id...');
+        requestParams = {
+          method: 'GET',
+          url: `${url}/api/v2/cases/${id}/referrals`,
+          headers: {
+            Authorization: generateAuthString(state),
+            'Content-Type': 'application/json',
+          },
+        };
+        resolve(queryHandler(state, requestParams, callback));
+      } else {
+        console.log('Fetching by case id...');
+        const qs = {
+          case_id: `${id}`,
+        };
+        requestParams = {
+          method: 'GET',
+          url: `${url}/api/v2/cases`,
+          headers: {
+            Authorization: generateAuthString(state),
+            'Content-Type': 'application/json',
+          },
+          qs,
+        };
+        return new Promise((resolve, reject) => {
+          request(requestParams, (error, response, body) => {
+            response = scrubResponse(response);
+            error = assembleError({ error, response, params: {} });
+            if (error) {
+              reject(error);
+            } else {
+              const resp = tryJson(body);
+              if (resp.data.length == 0) {
+                console.log('No case found.');
+                resolve(state);
+                return state;
+              } else if (resp.data.length === 1) {
+                console.log('Case found. Fetching referrals.');
+                const id = resp.data[0].id;
+                requestParams = {
+                  method: 'GET',
+                  url: `${url}/api/v2/cases/${id}/referrals`,
+                  headers: {
+                    Authorization: generateAuthString(state),
+                    'Content-Type': 'application/json',
+                  },
+                };
+                resolve(queryHandler(state, requestParams, callback));
+              } else {
+                reject(
+                  'Multiple cases found. Try using another externalId and ensure that it is unique.'
+                );
+              }
+            }
+          });
+        });
+      }
     });
   };
 }
