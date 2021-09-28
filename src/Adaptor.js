@@ -437,7 +437,7 @@ export function getReferrals(params, callback) {
   return state => {
     const { url } = state.configuration;
 
-    const { externalId } = expandReferences(params)(state);
+    const { externalId, id } = expandReferences(params)(state);
 
     let requestParams = {};
 
