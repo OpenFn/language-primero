@@ -34,3 +34,5 @@ node_modules
 
 # local tmp directory for state.json and expression.js files
 tmp
+
+.vscode
