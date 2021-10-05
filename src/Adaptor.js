@@ -579,9 +579,8 @@ export function updateReferrals(params, callback) {
   return state => {
     const { url } = state.configuration;
 
-    const { externalId, id, referral_id, data } = expandReferences(params)(
-      state
-    );
+    const { externalId, id, referral_id, data } =
+      expandReferences(params)(state);
 
     let requestParams = {};
 

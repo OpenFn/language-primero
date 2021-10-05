@@ -17,7 +17,7 @@ export function setAuth(configuration, manualAuth) {
 }
 
 export function scrubResponse(response) {
-  response.request.headers.Authorization = '--REDACTED--';
+  if (response) response.request.headers.Authorization = '--REDACTED--';
 
   return response;
 }
