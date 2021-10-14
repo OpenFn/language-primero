@@ -27,7 +27,7 @@ export function execute(...operations) {
 
   return state => {
     return commonExecute(
-      login,
+      generateAuthString,
       ...operations,
       cleanupState
     )({ ...initialState, ...state });
@@ -43,13 +43,15 @@ export function execute(...operations) {
  * @returns {string}
  */
 function generateAuthString(state) {
-  const { auth, configuration } = state;
+  const { configuration } = state;
   if (configuration.basicAuth) {
     const { user, password } = configuration;
-    return 'Basic ' + Buffer.from(`${user}:${password}`).toString('base64');
+    const auth = {
+      token: 'Basic ' + Buffer.from(`${user}:${password}`).toString('base64'),
+    };
+    return { ...state, auth };
   }
-  const { token } = auth;
-  return `Bearer ${token}`;
+  return login(state);
 }
 
 /**
@@ -126,6 +128,7 @@ function login(state) {
         reject(error);
       } else {
         const resp = tryJson(body);
+        resp.token = `Bearer ${resp.token}`;
         resolve({ ...state, auth: resp });
       }
     });
@@ -161,13 +164,14 @@ function cleanupState(state) {
  */
 export function getCases(query, callback) {
   return state => {
+    const { auth } = state;
     const { url } = state.configuration;
 
     const params = {
       method: 'GET',
       url: `${url}/api/v2/cases`,
       headers: {
-        Authorization: generateAuthString(state),
+        Authorization: auth.token,
         'Content-Type': 'application/json',
       },
       qs: query,
@@ -221,6 +225,7 @@ export function getCases(query, callback) {
  */
 export function createCase(params, callback) {
   return state => {
+    const { auth } = state;
     const { url } = state.configuration;
 
     const { data } = expandReferences(params)(state);
@@ -229,7 +234,7 @@ export function createCase(params, callback) {
       method: 'POST',
       url: `${url}/api/v2/cases`,
       headers: {
-        Authorization: generateAuthString(state),
+        Authorization: auth.token,
         'Content-Type': 'application/json',
         options: {
           successCodes: [200, 201, 202, 203, 204],
@@ -278,6 +283,7 @@ export function createCase(params, callback) {
  */
 export function updateCase(id, params, callback) {
   return state => {
+    const { auth } = state;
     const { url } = state.configuration;
     const { data } = expandReferences(params)(state);
 
@@ -285,7 +291,7 @@ export function updateCase(id, params, callback) {
       method: 'PATCH',
       url: `${url}/api/v2/cases/${id}`,
       headers: {
-        Authorization: generateAuthString(state),
+        Authorization: auth.token,
         'Content-Type': 'application/json',
       },
       json: { data: data },
@@ -328,6 +334,7 @@ export function updateCase(id, params, callback) {
  */
 export function upsertCase(params, callback) {
   return state => {
+    const { auth } = state;
     const { url } = state.configuration;
     const { data, externalIds } = expandReferences(params)(state);
 
@@ -347,7 +354,7 @@ export function upsertCase(params, callback) {
       method: 'GET',
       url: `${url}/api/v2/cases`,
       headers: {
-        Authorization: generateAuthString(state),
+        Authorization: auth.token,
         'Content-Type': 'application/json',
       },
       qs,
@@ -435,6 +442,7 @@ export function upsertCase(params, callback) {
  */
 export function getReferrals(params, callback) {
   return state => {
+    const { auth } = state;
     const { url } = state.configuration;
 
     const { externalId, id } = expandReferences(params)(state);
@@ -448,7 +456,7 @@ export function getReferrals(params, callback) {
           method: 'GET',
           url: `${url}/api/v2/cases/${id}/referrals`,
           headers: {
-            Authorization: generateAuthString(state),
+            Authorization: auth.token,
             'Content-Type': 'application/json',
           },
         };
@@ -462,7 +470,7 @@ export function getReferrals(params, callback) {
           method: 'GET',
           url: `${url}/api/v2/cases`,
           headers: {
-            Authorization: generateAuthString(state),
+            Authorization: auth.token,
             'Content-Type': 'application/json',
           },
           qs,
@@ -486,7 +494,7 @@ export function getReferrals(params, callback) {
                   method: 'GET',
                   url: `${url}/api/v2/cases/${id}/referrals`,
                   headers: {
-                    Authorization: generateAuthString(state),
+                    Authorization: auth.token,
                     'Content-Type': 'application/json',
                   },
                 };
@@ -521,6 +529,7 @@ export function getReferrals(params, callback) {
  */
 export function createReferrals(params, callback) {
   return state => {
+    const { auth } = state;
     const { url } = state.configuration;
 
     const { data } = expandReferences(params)(state);
@@ -529,7 +538,7 @@ export function createReferrals(params, callback) {
       method: 'POST',
       url: `${url}/api/v2/cases/referrals`,
       headers: {
-        Authorization: generateAuthString(state),
+        Authorization: auth.token,
         'Content-Type': 'application/json',
         options: {
           successCodes: [200, 201, 202, 203, 204],
@@ -577,10 +586,12 @@ export function createReferrals(params, callback) {
  */
 export function updateReferrals(params, callback) {
   return state => {
+    const { auth } = state;
     const { url } = state.configuration;
 
-    const { externalId, id, referral_id, data } =
-      expandReferences(params)(state);
+    const { externalId, id, referral_id, data } = expandReferences(params)(
+      state
+    );
 
     let requestParams = {};
 
@@ -591,7 +602,7 @@ export function updateReferrals(params, callback) {
           method: 'PATCH',
           url: `${url}/api/v2/cases/${id}/referrals/${referral_id}`,
           headers: {
-            Authorization: generateAuthString(state),
+            Authorization: auth.token,
             'Content-Type': 'application/json',
           },
           json: { data: data },
@@ -606,7 +617,7 @@ export function updateReferrals(params, callback) {
           method: 'GET',
           url: `${url}/api/v2/cases`,
           headers: {
-            Authorization: generateAuthString(state),
+            Authorization: auth.token,
             'Content-Type': 'application/json',
           },
           qs,
@@ -632,7 +643,7 @@ export function updateReferrals(params, callback) {
                   url: `${url}/api/v2/cases/${id}/referrals/${referral_id}`,
 
                   headers: {
-                    Authorization: generateAuthString(state),
+                    Authorization: auth.token,
                     'Content-Type': 'application/json',
                   },
                   json: { data: data },
