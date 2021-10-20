@@ -449,66 +449,64 @@ export function getReferrals(params, callback) {
 
     let requestParams = {};
 
-    return new Promise((resolve, reject) => {
-      if (externalId === 'record_id') {
-        console.log('Fetching by record id...');
-        requestParams = {
-          method: 'GET',
-          url: `${url}/api/v2/cases/${id}/referrals`,
-          headers: {
-            Authorization: auth.token,
-            'Content-Type': 'application/json',
-          },
-        };
-        resolve(queryHandler(state, requestParams, callback));
-      } else {
-        console.log('Fetching by case id...');
-        const qs = {
-          case_id: `${id}`,
-        };
-        requestParams = {
-          method: 'GET',
-          url: `${url}/api/v2/cases`,
-          headers: {
-            Authorization: auth.token,
-            'Content-Type': 'application/json',
-          },
-          qs,
-        };
-        return new Promise((resolve, reject) => {
-          request(requestParams, (error, response, body) => {
-            response = scrubResponse(response);
-            error = assembleError({ error, response, params: {} });
-            if (error) {
-              reject(error);
+    if (externalId === 'record_id') {
+      console.log('Fetching by record id...');
+      requestParams = {
+        method: 'GET',
+        url: `${url}/api/v2/cases/${id}/referrals`,
+        headers: {
+          Authorization: auth.token,
+          'Content-Type': 'application/json',
+        },
+      };
+      return queryHandler(state, requestParams, callback);
+    } else {
+      console.log('Fetching by case id...');
+      const qs = {
+        case_id: `${id}`,
+      };
+      requestParams = {
+        method: 'GET',
+        url: `${url}/api/v2/cases`,
+        headers: {
+          Authorization: auth.token,
+          'Content-Type': 'application/json',
+        },
+        qs,
+      };
+      return new Promise((resolve, reject) => {
+        request(requestParams, (error, response, body) => {
+          response = scrubResponse(response);
+          error = assembleError({ error, response, params: {} });
+          if (error) {
+            reject(error);
+          } else {
+            const resp = tryJson(body);
+            if (resp.data.length == 0) {
+              console.log('No case found.');
+              resolve(state);
+              return state;
+            } else if (resp.data.length === 1) {
+              console.log('Case found. Fetching referrals.');
+              const id = resp.data[0].id;
+              requestParams = {
+                method: 'GET',
+                url: `${url}/api/v2/cases/${id}/referrals`,
+                headers: {
+                  Authorization: auth.token,
+                  'Content-Type': 'application/json',
+                },
+              };
+              resolve(queryHandler(state, requestParams, callback));
             } else {
-              const resp = tryJson(body);
-              if (resp.data.length == 0) {
-                console.log('No case found.');
-                resolve(state);
-                return state;
-              } else if (resp.data.length === 1) {
-                console.log('Case found. Fetching referrals.');
-                const id = resp.data[0].id;
-                requestParams = {
-                  method: 'GET',
-                  url: `${url}/api/v2/cases/${id}/referrals`,
-                  headers: {
-                    Authorization: auth.token,
-                    'Content-Type': 'application/json',
-                  },
-                };
-                resolve(queryHandler(state, requestParams, callback));
-              } else {
-                reject(
-                  'Multiple cases found. Try using another externalId and ensure that it is unique.'
-                );
-              }
+              reject(
+                'Multiple cases found. Try using another externalId and ensure that it is unique.'
+              );
             }
-          });
+          }
         });
-      }
-    });
+      });
+    }
   };
 }
 
@@ -595,70 +593,68 @@ export function updateReferrals(params, callback) {
 
     let requestParams = {};
 
-    return new Promise((resolve, reject) => {
-      if (externalId === 'record_id') {
-        console.log('Updating by record id...');
-        requestParams = {
-          method: 'PATCH',
-          url: `${url}/api/v2/cases/${id}/referrals/${referral_id}`,
-          headers: {
-            Authorization: auth.token,
-            'Content-Type': 'application/json',
-          },
-          json: { data: data },
-        };
-        resolve(queryHandler(state, requestParams, callback));
-      } else {
-        console.log('Updating by case id...');
-        const qs = {
-          case_id: `${id}`,
-        };
-        requestParams = {
-          method: 'GET',
-          url: `${url}/api/v2/cases`,
-          headers: {
-            Authorization: auth.token,
-            'Content-Type': 'application/json',
-          },
-          qs,
-        };
-        return new Promise((resolve, reject) => {
-          request(requestParams, (error, response, body) => {
-            response = scrubResponse(response);
-            error = assembleError({ error, response, params: {} });
-            if (error) {
-              reject(error);
+    if (externalId === 'record_id') {
+      console.log('Updating by record id...');
+      requestParams = {
+        method: 'PATCH',
+        url: `${url}/api/v2/cases/${id}/referrals/${referral_id}`,
+        headers: {
+          Authorization: auth.token,
+          'Content-Type': 'application/json',
+        },
+        json: { data: data },
+      };
+      return queryHandler(state, requestParams, callback);
+    } else {
+      console.log('Updating by case id...');
+      const qs = {
+        case_id: `${id}`,
+      };
+      requestParams = {
+        method: 'GET',
+        url: `${url}/api/v2/cases`,
+        headers: {
+          Authorization: auth.token,
+          'Content-Type': 'application/json',
+        },
+        qs,
+      };
+      return new Promise((resolve, reject) => {
+        request(requestParams, (error, response, body) => {
+          response = scrubResponse(response);
+          error = assembleError({ error, response, params: {} });
+          if (error) {
+            reject(error);
+          } else {
+            const resp = tryJson(body);
+            if (resp.data.length == 0) {
+              console.log('No case found.');
+              resolve(state);
+              return state;
+            } else if (resp.data.length === 1) {
+              console.log('Case found. Fetching referrals.');
+
+              const id = resp.data[0].id;
+              requestParams = {
+                method: 'PATCH',
+                url: `${url}/api/v2/cases/${id}/referrals/${referral_id}`,
+
+                headers: {
+                  Authorization: auth.token,
+                  'Content-Type': 'application/json',
+                },
+                json: { data: data },
+              };
+              resolve(queryHandler(state, requestParams, callback));
             } else {
-              const resp = tryJson(body);
-              if (resp.data.length == 0) {
-                console.log('No case found.');
-                resolve(state);
-                return state;
-              } else if (resp.data.length === 1) {
-                console.log('Case found. Fetching referrals.');
-
-                const id = resp.data[0].id;
-                requestParams = {
-                  method: 'PATCH',
-                  url: `${url}/api/v2/cases/${id}/referrals/${referral_id}`,
-
-                  headers: {
-                    Authorization: auth.token,
-                    'Content-Type': 'application/json',
-                  },
-                  json: { data: data },
-                };
-                resolve(queryHandler(state, requestParams, callback));
-              } else {
-                reject(
-                  'Multiple cases found. Try using another externalId and ensure that it is unique.'
-                );
-              }
+              reject(
+                'Multiple cases found. Try using another externalId and ensure that it is unique.'
+              );
             }
-          });
+          }
         });
-      }
-    });
+      });
+    }
   };
 }
 
