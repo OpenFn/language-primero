@@ -660,6 +660,7 @@ export function updateReferrals(params, callback) {
 
 export {
   alterState,
+  beta,
   fn,
   combine,
   dataPath,
