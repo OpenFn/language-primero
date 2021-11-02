@@ -483,8 +483,8 @@ export function getReferrals(params, callback) {
           } else {
             const resp = tryJson(body);
             if (resp.data.length == 0) {
-              console.log('No case found.');
-              resolve(state);
+              // console.log('No case found.');
+              reject('No case found');
               return state;
             } else if (resp.data.length === 1) {
               console.log('Case found. Fetching referrals.');
