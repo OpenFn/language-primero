@@ -305,6 +305,9 @@ export function updateCase(id, params, callback) {
           reject(error);
         } else {
           const resp = tryJson(body);
+          console.log(
+            `Put succeeded: ${response.statusCode} ${response.statusMessage}`
+          );
           const nextState = composeNextState(state, resp.body?.data);
           if (callback) resolve(callback(nextState));
           resolve(nextState);
@@ -376,7 +379,7 @@ export function upsertCase(params, callback) {
           if (resp.data.length == 0) {
             console.log('No case found. Performing create.');
             resolve(createCase({ data: state => data }, callback)(state));
-          } else if (resp.data.length == 1) {
+          } else if (resp.data.length > 0) {
             console.log('Case found. Performing update.');
             resolve(
               updateCase(
@@ -408,11 +411,11 @@ export function upsertCase(params, callback) {
                 callback
               )(state)
             );
-          } else {
+          } /* else {
             reject(
               'Multiple cases found. Try using another externalId and ensure that it is unique.'
             );
-          }
+          } */
         }
       });
     });
