@@ -346,12 +346,14 @@ export function upsertCase(params, callback) {
       scope: {},
     };
 
-    externalIds.map(x => {
-      // For every externalId field that is provided, add a key to the
-      // scope object in our qs (queryString) and set the value for that key to
-      // whatever value is found IN THE DATA for the given externalId.
-      return (qs[x] = `${data[x]}`);
-    });
+    externalIds
+      .filter(x => data[x])
+      .forEach(x => {
+        // For every externalId field that is provided, add a key to the
+        // scope object in our qs (queryString) and set the value for that key to
+        // whatever value is found IN THE DATA for the given externalId.
+        return (qs[x] = `${data[x]}`);
+      });
 
     const requestParams = {
       method: 'GET',
