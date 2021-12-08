@@ -389,8 +389,7 @@ export function upsertCase(params, callback) {
                 {
                   data: state => {
                     // =========== Need clarification on this. Should we test when 'child' does not exist? ===========
-                    // Note: 'child' is not needed for v2
-                    const { child } = data;
+                    const { services_section } = data;
                     // NOTE: When performing an upsert, we only add _new_
                     // services to Primero, as defined by their "unique_id".
                     // The logic below takes the services array returned by
@@ -401,9 +400,17 @@ export function upsertCase(params, callback) {
                     const oldServices = resp.data[0].services_section;
 
                     if (oldServices && oldServices.length > 0) {
+                      const serviceIds = oldServices.map(s => s.unique_id);
+
+                      const newServices = services_section.filter(
+                        os => !serviceIds.includes(os.unique_id)
+                      );
+
+                      const mergedServices = oldServices.concat(newServices);
+
                       return {
                         ...data,
-                        services_section: oldServices,
+                        services_section: mergedServices,
                       };
                     }
 
