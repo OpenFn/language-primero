@@ -193,7 +193,7 @@ export function getCases(query, callback) {
               response.request,
               null,
               2
-            )}.`
+            )}`
           );
           const nextState = composeNextState(state, resp.data);
           if (callback) resolve(callback(nextState));
