@@ -81,7 +81,7 @@ function queryHandler(state, params, callback) {
               response.request,
               null,
               2
-            )}.`
+            )}`
           );
         } else if (params.method === 'PATCH') {
           console.log('Referral updated.');
