@@ -81,7 +81,7 @@ function queryHandler(state, params, callback) {
               response.request,
               null,
               2
-            )}.`
+            )}`
           );
         } else if (params.method === 'PATCH') {
           console.log('Referral updated.');
@@ -193,7 +193,7 @@ export function getCases(query, callback) {
               response.request,
               null,
               2
-            )}.`
+            )}`
           );
           const nextState = composeNextState(state, resp.data);
           if (callback) resolve(callback(nextState));
