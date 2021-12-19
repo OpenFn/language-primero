@@ -385,12 +385,12 @@
   "exports": [],
   "common": [
     {
-      "name": "alterState",
+      "name": "fn",
       "params": [
         "func"
       ],
       "docs": {
-        "description": "Runs a function using state.",
+        "description": "Creates a custom step (or operation) for more flexible job writing.",
         "tags": [
           {
             "title": "public",
@@ -399,7 +399,7 @@
           },
           {
             "title": "example",
-            "description": "alterState(callback)"
+            "description": "fn(state => {\n  // do some things to state\n  return state;\n});"
           },
           {
             "title": "function",
@@ -503,7 +503,7 @@
         "path"
       ],
       "docs": {
-        "description": "Picks out a single value from source data.\nIf a JSONPath returns more than one value for the reference, the first\nitem will be returned.",
+        "description": "Picks out a single value from the source data object—usually `state.data`.\nIf a JSONPath returns more than one value for the reference, the first\nitem will be returned.",
         "tags": [
           {
             "title": "public",
@@ -614,7 +614,9 @@
     },
     {
       "name": "combine",
-      "params": [],
+      "params": [
+        "operations"
+      ],
       "docs": {
         "description": "Combines two operations into one",
         "tags": [
@@ -631,6 +633,15 @@
             "title": "function",
             "description": null,
             "name": null
+          },
+          {
+            "title": "param",
+            "description": "Operations to be performed.",
+            "type": {
+              "type": "NameExpression",
+              "name": "Operations"
+            },
+            "name": "operations"
           },
           {
             "title": "returns",
@@ -691,7 +702,9 @@
     },
     {
       "name": "fields",
-      "params": [],
+      "params": [
+        "fields"
+      ],
       "docs": {
         "description": "Zips key value pairs into an object.",
         "tags": [
@@ -708,6 +721,15 @@
             "title": "function",
             "description": null,
             "name": null
+          },
+          {
+            "title": "param",
+            "description": "a list of fields",
+            "type": {
+              "type": "NameExpression",
+              "name": "Fields"
+            },
+            "name": "fields"
           },
           {
             "title": "returns",
