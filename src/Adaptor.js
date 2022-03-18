@@ -167,6 +167,8 @@ export function getCases(query, callback) {
     const { auth } = state;
     const { url } = state.configuration;
 
+    const expandedQuery = expandReferences(query)(state);
+
     const params = {
       method: 'GET',
       url: `${url}/api/v2/cases`,
@@ -174,7 +176,7 @@ export function getCases(query, callback) {
         Authorization: auth.token,
         'Content-Type': 'application/json',
       },
-      qs: query,
+      qs: expandedQuery,
     };
 
     return new Promise((resolve, reject) => {
@@ -627,13 +629,14 @@ export function updateReferrals(params, callback) {
 export {
   alterState,
   beta,
-  fn,
   combine,
   dataPath,
   dataValue,
+  dateFns,
   each,
   field,
   fields,
+  fn,
   http,
   lastReferenceValue,
   merge,
