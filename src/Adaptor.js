@@ -306,7 +306,7 @@ export function updateCase(id, params, callback) {
         } else {
           const resp = tryJson(body);
           console.log(
-            `Put succeeded: ${response.statusCode} ${response.statusMessage}`
+            `PATCH succeeded: ${response.statusCode} ${response.statusMessage}`
           );
           const nextState = composeNextState(state, resp.body?.data);
           if (callback) resolve(callback(nextState));
@@ -380,51 +380,13 @@ export function upsertCase(params, callback) {
           const resp = tryJson(body);
           if (resp.data.length == 0) {
             console.log('No case found. Performing create.');
-            resolve(createCase({ data: state => data }, callback)(state));
+            resolve(createCase({ data }, callback)(state));
           } else if (resp.data.length > 0) {
             console.log('Case found. Performing update.');
             resolve(
-              updateCase(
-                resp.data[0].id,
-                {
-                  data: state => {
-                    // =========== Need clarification on this. Should we test when 'child' does not exist? ===========
-                    const { services_section } = data;
-                    // NOTE: When performing an upsert, we only add _new_
-                    // services to Primero, as defined by their "unique_id".
-                    // The logic below takes the services array returned by
-                    // Primero as the starting point, and concatenates it with a
-                    // "newServices" array, which includes only those services
-                    // whose "unique_id" values are NOT existing in the Primero
-                    // services array.
-                    const oldServices = resp.data[0].services_section;
-
-                    if (oldServices && oldServices.length > 0) {
-                      const serviceIds = oldServices.map(s => s.unique_id);
-
-                      const newServices = services_section.filter(
-                        os => !serviceIds.includes(os.unique_id)
-                      );
-
-                      const mergedServices = oldServices.concat(newServices);
-
-                      return {
-                        ...data,
-                        services_section: mergedServices,
-                      };
-                    }
-
-                    return data;
-                  },
-                },
-                callback
-              )(state)
+              updateCase(resp.data[0].id, { data: state.data }, callback)(state)
             );
-          } /* else {
-            reject(
-              'Multiple cases found. Try using another externalId and ensure that it is unique.'
-            );
-          } */
+          }
         }
       });
     });
@@ -592,9 +554,8 @@ export function updateReferrals(params, callback) {
     const { auth } = state;
     const { url } = state.configuration;
 
-    const { externalId, id, referral_id, data } = expandReferences(params)(
-      state
-    );
+    const { externalId, id, referral_id, data } =
+      expandReferences(params)(state);
 
     let requestParams = {};
 
