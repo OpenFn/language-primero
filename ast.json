@@ -329,13 +329,13 @@
       "valid": true
     },
     {
-      "name": "updateReferrals",
+      "name": "updateReferral",
       "params": [
         "params",
         "callback"
       ],
       "docs": {
-        "description": "Update referrals for a specific case in Primero",
+        "description": "Update a single referral for a specific case in Primero",
         "tags": [
           {
             "title": "public",
@@ -344,7 +344,7 @@
           },
           {
             "title": "example",
-            "description": "updateReferrals(\n {\n   externalId: \"record_id\",\n   id: \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\"\n   referral_id: \"37612f65-3bda-48eb-b526-d31383f94166\",\n   data: state => state.data\n },\n callback)"
+            "description": "updateReferral(\n {\n   externalId: \"record_id\",\n   id: \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\"\n   referral_id: \"37612f65-3bda-48eb-b526-d31383f94166\",\n   data: state => state.data\n },\n callback)"
           },
           {
             "title": "function",
