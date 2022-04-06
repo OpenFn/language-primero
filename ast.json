@@ -238,7 +238,7 @@
           },
           {
             "title": "example",
-            "description": "getReferrals(\n {\n   externalId: \"record_id\",\n   id: \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\"\n }, callback)"
+            "description": "getReferrals({\n  externalId: \"record_id\",\n  id: \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\"\n}, callback)"
           },
           {
             "title": "function",
@@ -247,7 +247,7 @@
           },
           {
             "title": "param",
-            "description": "an object with an externalId value to use and the id.",
+            "description": "an object with an externalId field and an externalId value.",
             "type": {
               "type": "NameExpression",
               "name": "object"
@@ -282,7 +282,7 @@
         "callback"
       ],
       "docs": {
-        "description": "Create case in Primero",
+        "description": "Create referrals in Primero",
         "tags": [
           {
             "title": "public",
@@ -291,7 +291,7 @@
           },
           {
             "title": "example",
-            "description": "createReferrals({\n  data: {\n   \"ids\": ['case_id'],\n   \"transitioned_to\": \"primero_cp\",\n   \"notes\": \"Creating a referral\"\n  }}, callback)"
+            "description": "createReferrals({\n  data: {\n    \"ids\": ['case_id'],\n     \"transitioned_to\": \"primero_cp\",\n     \"notes\": \"Creating a referral\"\n  }\n}, callback)"
           },
           {
             "title": "function",
@@ -300,7 +300,7 @@
           },
           {
             "title": "param",
-            "description": "an object with some case data.",
+            "description": "an object with referral data.",
             "type": {
               "type": "NameExpression",
               "name": "object"
@@ -344,7 +344,7 @@
           },
           {
             "title": "example",
-            "description": "updateReferral(\n {\n   externalId: \"record_id\",\n   id: \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\"\n   referral_id: \"37612f65-3bda-48eb-b526-d31383f94166\",\n   data: state => state.data\n },\n callback)"
+            "description": "updateReferral({\n  caseExternalId: \"record_id\",\n  caseId: \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\"\n  id: \"37612f65-3bda-48eb-b526-d31383f94166\",\n  data: state => state.data\n}, callback)"
           },
           {
             "title": "function",
