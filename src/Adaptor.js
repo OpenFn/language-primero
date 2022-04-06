@@ -534,11 +534,21 @@ export function createReferrals(params, callback) {
   };
 }
 
+// TODO: We need to deprecate this.
+export function updateReferrals(params, callback) {
+  console.log(
+    'DEPRECATION WARNING: `updateReferrals` is being deprecated and is now called' +
+      ' `updateReferral`; it only allows users to update a single referral on a' +
+      'single case. Please update your job accordingly.'
+  );
+  return updateReferral(params, callback);
+}
+
 /**
- * Update referrals for a specific case in Primero
+ * Update a single referral for a specific case in Primero
  * @public
  * @example
- * updateReferrals(
+ * updateReferral(
  *  {
  *    externalId: "record_id",
  *    id: "7ed1d49f-14c7-4181-8d83-dc8ed1699f08"
@@ -551,7 +561,7 @@ export function createReferrals(params, callback) {
  * @param {function} callback - (Optional) Callback function
  * @returns {Operation}
  */
-export function updateReferrals(params, callback) {
+export function updateReferral(params, callback) {
   return state => {
     const { auth } = state;
     const { url } = state.configuration;
