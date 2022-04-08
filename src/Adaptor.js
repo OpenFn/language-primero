@@ -156,18 +156,20 @@ function cleanupState(state) {
  *   remote: true,
  *   case_id: '6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz'
  *   query: 'sex=male' // optional
- * }, callback)
+ * }, { withReferrals: true }, callback)
  * @function
- * @param {object} query - an object with a query param at minimum.
+ * @param {object} query - an object with a query param at minimum, option to getReferrals
+ * @param {object} options - (Optional) an object with a getReferrals key to fetch referrals
  * @param {function} callback - (Optional) Callback function
  * @returns {Operation}
  */
-export function getCases(query, callback) {
+export function getCases(query, options, callback) {
   return state => {
     const { auth } = state;
     const { url } = state.configuration;
 
     const expandedQuery = expandReferences(query)(state);
+    const expandedOptions = expandReferences(options)(state);
 
     const params = {
       method: 'GET',
@@ -180,7 +182,7 @@ export function getCases(query, callback) {
     };
 
     return new Promise((resolve, reject) => {
-      request(params, function (error, response, body) {
+      request(params, async function (error, response, body) {
         response = scrubResponse(response);
         error = assembleError({ error, response, params });
         if (error) {
@@ -190,14 +192,38 @@ export function getCases(query, callback) {
             `Primero says: '${response.statusCode} ${response.statusMessage}'`
           );
           const resp = tryJson(body);
+          const cases = resp.data;
           console.log(
-            `${resp.data.length} cases retrieved from request: ${JSON.stringify(
+            `${cases.length} cases retrieved from request: ${JSON.stringify(
               response.request,
               null,
               2
             )}`
           );
-          const nextState = composeNextState(state, resp.data);
+
+          if (expandedOptions.withReferrals) {
+            for await (const c of cases) {
+              const requestParams = {
+                method: 'GET',
+                url: `${url}/api/v2/cases/${c.id}/referrals`,
+                headers: {
+                  Authorization: auth.token,
+                  'Content-Type': 'application/json',
+                },
+              };
+
+              const referrals = await new Promise((resolve, reject) => {
+                request(requestParams, (e, r, b) => {
+                  // console.log('🚨 🚨 🚨 referrals response', b);
+                  resolve(tryJson(b).data);
+                });
+              });
+
+              c.referrals = referrals;
+            }
+          }
+
+          const nextState = composeNextState(state, cases);
           if (callback) resolve(callback(nextState));
           resolve(nextState);
         }
@@ -401,10 +427,10 @@ export function upsertCase(params, callback) {
  * @example
  * getReferrals({
  *   externalId: "record_id",
- *   id: "7ed1d49f-14c7-4181-8d83-dc8ed1699f08"
+ *   id: "7ed1d49f-14c7-4181-8d83-dc8ed1699f08",
  * }, callback)
  * @function
- * @param {object} params - an object with an externalId field and an externalId value.
+ * @param {object} params - an object with an externalId field to select the attribute to use for matching on case and an externalId value for that case.
  * @param {function} callback - (Optional) Callback function
  * @returns {Operation}
  */
@@ -451,7 +477,6 @@ export function getReferrals(params, callback) {
           } else {
             const resp = tryJson(body);
             if (resp.data.length == 0) {
-              // console.log('No case found.');
               reject('No case found');
               return state;
             } else if (resp.data.length === 1) {
@@ -570,7 +595,7 @@ export function updateReferral(params, callback) {
     let requestParams = {};
 
     if (caseExternalId === 'record_id') {
-      console.log('Updating by record id...');
+      console.log('Updating referral by record id...');
       requestParams = {
         method: 'PATCH',
         url: `${url}/api/v2/cases/${caseId}/referrals/${id}`,
@@ -582,7 +607,7 @@ export function updateReferral(params, callback) {
       };
       return queryHandler(state, requestParams, callback);
     } else {
-      console.log('Updating by case id...');
+      console.log('Updating referral by case id...');
       const qs = {
         case_id: `${caseId}`,
       };

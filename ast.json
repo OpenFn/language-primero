@@ -4,6 +4,7 @@
       "name": "getCases",
       "params": [
         "query",
+        "options",
         "callback"
       ],
       "docs": {
@@ -16,7 +17,7 @@
           },
           {
             "title": "example",
-            "description": "getCases({\n  remote: true,\n  case_id: '6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz'\n  query: 'sex=male' // optional\n}, callback)"
+            "description": "getCases({\n  remote: true,\n  case_id: '6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz'\n  query: 'sex=male' // optional\n}, { withReferrals: true }, callback)"
           },
           {
             "title": "function",
@@ -25,12 +26,21 @@
           },
           {
             "title": "param",
-            "description": "an object with a query param at minimum.",
+            "description": "an object with a query param at minimum, option to getReferrals",
             "type": {
               "type": "NameExpression",
               "name": "object"
             },
             "name": "query"
+          },
+          {
+            "title": "param",
+            "description": "(Optional) an object with a getReferrals key to fetch referrals",
+            "type": {
+              "type": "NameExpression",
+              "name": "object"
+            },
+            "name": "options"
           },
           {
             "title": "param",
@@ -238,7 +248,7 @@
           },
           {
             "title": "example",
-            "description": "getReferrals({\n  externalId: \"record_id\",\n  id: \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\"\n}, callback)"
+            "description": "getReferrals({\n  externalId: \"record_id\",\n  id: \"7ed1d49f-14c7-4181-8d83-dc8ed1699f08\",\n}, callback)"
           },
           {
             "title": "function",
@@ -247,7 +257,7 @@
           },
           {
             "title": "param",
-            "description": "an object with an externalId field and an externalId value.",
+            "description": "an object with an externalId field to select the attribute to use for matching on case and an externalId value for that case.",
             "type": {
               "type": "NameExpression",
               "name": "object"
