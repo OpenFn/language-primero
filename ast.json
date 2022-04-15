@@ -195,7 +195,7 @@
           },
           {
             "title": "example",
-            "description": "upsertCase({\n   externalIds: ['case_id'],\n   data: state => ({\n     \"age\": 20,\n     \"sex\": \"male\",\n     \"name\": \"Alex\",\n     \"status\": \"open\",\n     \"case_id\": \"6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz\",\n   }}\n);"
+            "description": "upsertCase({\n  externalIds: ['case_id'],\n  data: state => ({\n    \"age\": 20,\n    \"sex\": \"male\",\n    \"name\": \"Alex\",\n    \"status\": \"open\",\n    \"case_id\": \"6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz\",\n  })\n});"
           },
           {
             "title": "function",
