@@ -660,6 +660,65 @@ export function updateReferral(params, callback) {
   };
 }
 
+/**
+ * Get forms from Primero
+ * @public
+ * @example
+ * getForms({
+ *   record_type: '' // Optional. Filters by the record type of the form,
+ *   module_id: 'id' //Optional. Filter forms by module,
+ * }, callback)
+ * @function
+ * @param {object} query - an object with a query param at minimum
+ * @param {function} callback - (Optional) Callback function
+ * @returns {Operation}
+ */
+export function getForms(query, callback) {
+  return state => {
+    const { auth } = state;
+    const { url } = state.configuration;
+
+    const expandedQuery = expandReferences(query)(state);
+
+    const params = {
+      method: 'GET',
+      url: `${url}/api/v2/forms`,
+      headers: {
+        Authorization: auth.token,
+        'Content-Type': 'application/json',
+      },
+      qs: expandedQuery,
+    };
+
+    return new Promise((resolve, reject) => {
+      request(params, async function (error, response, body) {
+        response = scrubResponse(response);
+        error = assembleError({ error, response, params });
+        if (error) {
+          reject(error);
+        } else {
+          console.log(
+            `Primero says: '${response.statusCode} ${response.statusMessage}'`
+          );
+          const resp = tryJson(body);
+          const forms = resp.data;
+          console.log(
+            `${forms.length} forms retrieved from request: ${JSON.stringify(
+              response.request,
+              null,
+              2
+            )}`
+          );
+
+          const nextState = composeNextState(state, forms);
+          if (callback) resolve(callback(nextState));
+          resolve(nextState);
+        }
+      });
+    });
+  };
+}
+
 export {
   alterState,
   beta,

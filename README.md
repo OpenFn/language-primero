@@ -76,6 +76,29 @@ getCases(
 );
 ```
 
+### Get forms from Primero with query parameters
+
+Use this function to get forms from Primero that are accessible to this user based on a set of query parameters. The user can filter the form list by record type and module.
+
+```js
+getForms(state => {
+  console.log('We are fetching forms from Primero for this user');
+  return state;
+});
+```
+
+```js
+getForms(
+  {
+    module_id: '6aeaa66a-5a92-4ff5-bf7a-e59cde07eaaz',
+  },
+  state => {
+    console.log('We are fetching a unique form using module_id');
+    return state;
+  }
+);
+```
+
 ### Create a new case in Primero
 
 Use this function to insert a new case in Primero based on a set of Data.
