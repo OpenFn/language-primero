@@ -99,6 +99,25 @@ getForms(
 );
 ```
 
+### Get lookups from Primero with query parameters
+
+Use this function to get a paginated list of all lookups that are accessible to this user from Primero.
+
+Note: You can specify a `per` value to fetch records per page(Defaults to 20). Also you can specify `page` value to fetch pagination (Defaults to 1)
+
+```js
+getLookups(
+  {
+    per: 10000,
+    page: 1,
+  },
+  state => {
+    console.log('Here is the callback.');
+    return state;
+  }
+);
+```
+
 ### Create a new case in Primero
 
 Use this function to insert a new case in Primero based on a set of Data.
