@@ -5,11 +5,11 @@
   "build": {
     "dockerfile": "Dockerfile",
     // Update 'VARIANT' to pick a Node version: 12, 14, 16
-    "args": { "VARIANT": "14" }
+    "args": { "VARIANT": "18" }
   },
 
   "containerEnv": {
-    "GH_TOKEN": "${localEnv:GH_TOKEN}",
+    "GH_TOKEN": "${localEnv:GH_TOKEN}"
   },
 
   "mounts": [
