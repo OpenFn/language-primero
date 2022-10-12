@@ -778,6 +778,68 @@ export function getLookups(query, callback) {
   };
 }
 
+/**
+ * Get locations from Primero
+ * @public
+ * @example
+ * getLocations({
+ *   page: 1 // Optional.
+ *   per: 20 // Optional. Records per page,
+ *   hierarchy: // Defaults to false,
+ * }, callback)
+ * @function
+ * @param {object} query - an object with a query param at minimum
+ * @param {function} callback - (Optional) Callback function
+ * @returns {Operation}
+ */
+export function getLocations(query, callback) {
+  return state => {
+    const { auth } = state;
+    const { url } = state.configuration;
+
+    const expandedQuery = expandReferences(query)(state);
+
+    const params = {
+      method: 'GET',
+      url: `${url}/api/v2/locations`,
+      headers: {
+        Authorization: auth.token,
+        'Content-Type': 'application/json',
+      },
+      qs: expandedQuery,
+    };
+
+    return new Promise((resolve, reject) => {
+      request(params, async function (error, response, body) {
+        response = scrubResponse(response);
+        error = assembleError({ error, response, params });
+        if (error) {
+          reject(error);
+        } else {
+          console.log(
+            `Primero says: '${response.statusCode} ${response.statusMessage}'`
+          );
+          const resp = tryJson(body);
+          const locations = resp.data;
+          console.log(
+            `${
+              locations.length
+            } locations retrieved from request: ${JSON.stringify(
+              response.request,
+              null,
+              2
+            )}`
+          );
+
+          const nextState = composeNextState(state, locations);
+          if (callback) resolve(callback(nextState));
+          resolve(nextState);
+        }
+      });
+    });
+  };
+}
+
 export {
   alterState,
   beta,

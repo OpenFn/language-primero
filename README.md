@@ -118,6 +118,23 @@ getLookups(
 );
 ```
 
+### Get loocations from Primero with query parameters
+
+Use this function to get a paginated list of all locations that are accessible to this user from Primero.
+Note: You can specify a `per` value to fetch records per page(Defaults to 20). Also you can specify `page` value to fetch pagination (Defaults to 1). Another parameter is `hierarchy: true` (Defaults to false)
+
+```js
+getLocations(
+  {
+    per: 100000,
+  },
+  state => {
+    console.log('Here is the callback.');
+    return state;
+  }
+);
+```
+
 ### Create a new case in Primero
 
 Use this function to insert a new case in Primero based on a set of Data.

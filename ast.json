@@ -496,6 +496,59 @@
         ]
       },
       "valid": true
+    },
+    {
+      "name": "getLocations",
+      "params": [
+        "query",
+        "callback"
+      ],
+      "docs": {
+        "description": "Get locations from Primero",
+        "tags": [
+          {
+            "title": "public",
+            "description": null,
+            "type": null
+          },
+          {
+            "title": "example",
+            "description": "getLocations({\n  page: 1 // Optional.\n  per: 20 // Optional. Records per page,\n  hierarchy: // Defaults to false,\n}, callback)"
+          },
+          {
+            "title": "function",
+            "description": null,
+            "name": null
+          },
+          {
+            "title": "param",
+            "description": "an object with a query param at minimum",
+            "type": {
+              "type": "NameExpression",
+              "name": "object"
+            },
+            "name": "query"
+          },
+          {
+            "title": "param",
+            "description": "(Optional) Callback function",
+            "type": {
+              "type": "NameExpression",
+              "name": "function"
+            },
+            "name": "callback"
+          },
+          {
+            "title": "returns",
+            "description": null,
+            "type": {
+              "type": "NameExpression",
+              "name": "Operation"
+            }
+          }
+        ]
+      },
+      "valid": true
     }
   ],
   "exports": [],
