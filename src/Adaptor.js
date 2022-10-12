@@ -719,6 +719,65 @@ export function getForms(query, callback) {
   };
 }
 
+/**
+ * Get lookups from Primero
+ * @public
+ * @example
+ * getLookups({
+ *   page: 1 // Optional. Pagination. Defaults to 1,
+ *   per: 20 // Optional. Records per page. Defaults to 20,
+ * }, callback)
+ * @function
+ * @param {object} query - an object with a query param at minimum
+ * @param {function} callback - (Optional) Callback function
+ * @returns {Operation}
+ */
+export function getLookups(query, callback) {
+  return state => {
+    const { auth } = state;
+    const { url } = state.configuration;
+
+    const expandedQuery = expandReferences(query)(state);
+
+    const params = {
+      method: 'GET',
+      url: `${url}/api/v2/lookups`,
+      headers: {
+        Authorization: auth.token,
+        'Content-Type': 'application/json',
+      },
+      qs: expandedQuery,
+    };
+
+    return new Promise((resolve, reject) => {
+      request(params, async function (error, response, body) {
+        response = scrubResponse(response);
+        error = assembleError({ error, response, params });
+        if (error) {
+          reject(error);
+        } else {
+          console.log(
+            `Primero says: '${response.statusCode} ${response.statusMessage}'`
+          );
+          const resp = tryJson(body);
+          const lookups = resp.data;
+          console.log(
+            `${lookups.length} lookups retrieved from request: ${JSON.stringify(
+              response.request,
+              null,
+              2
+            )}`
+          );
+
+          const nextState = composeNextState(state, lookups);
+          if (callback) resolve(callback(nextState));
+          resolve(nextState);
+        }
+      });
+    });
+  };
+}
+
 export {
   alterState,
   beta,
