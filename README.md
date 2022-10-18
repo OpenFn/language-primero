@@ -29,19 +29,14 @@ await final doucmentation for Primero's `v2` API before making changes.
 
 ## Technical Documentation
 
-### Sample State
+### Sample configuration
 
 ```json
 {
-  "configuration": {
-    "user": "admin",
-    "password": "admin",
-    "url": "https://some-primero-instance.unicef.org"
-  },
-  "data": {
-    "a": 1,
-    "b": 2
-  }
+  "user": "admin",
+  "password": "admin",
+  "url": "https://some-primero-instance.unicef.org",
+  "basicAuth": false
 }
 ```
 
